@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="8dp">
+
+        <TextView
+                android:id="@+id/dateTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                android:ellipsize="end"
+                android:maxLines="2"
+                android:text="Дата записи"/>
+
+        <TextView
+                android:id="@+id/timeTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                android:ellipsize="end"
+                android:maxLines="2"
+                android:text="Время записи"/>
+
+        <TextView
+                android:id="@+id/firstAndLastNamesTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toBottomOf="@id/dateTextView"
+                app:layout_constraintLeft_toLeftOf="parent"
+                android:paddingTop="5dp"
+                android:text="Имя Фамилия"/>
+
+        <TextView
+                android:id="@+id/phoneNumberTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toBottomOf="@id/dateTextView"
+                app:layout_constraintRight_toRightOf="parent"
+                android:paddingTop="5dp"
+                android:text="Телефон"/>
+
+        <TextView
+                android:id="@+id/procedureTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toBottomOf="@id/firstAndLastNamesTextView"
+                app:layout_constraintLeft_toLeftOf="parent"
+                android:paddingTop="5dp"
+                android:text="Процедура"/>
+
+        <TextView
+                android:id="@+id/priceTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toBottomOf="@id/phoneNumberTextView"
+                app:layout_constraintRight_toRightOf="parent"
+                android:paddingTop="5dp"
+                android:text="Цена"
+                android:textSize="12dp"
+                android:textStyle="bold"
+                android:textColor="@color/green1"
+                android:textAppearance="@style/TextAppearance.AppCompat.Large" />
+
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.cardview.widget.CardView>

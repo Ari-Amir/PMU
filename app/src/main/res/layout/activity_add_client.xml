@@ -1,0 +1,245 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/black"
+        tools:context=".records.AddRecordActivity">
+
+    <!--Toolbar-->
+
+    <TextView
+            android:id="@+id/toolbar"
+            app:layout_constraintTop_toTopOf="parent"
+            android:layout_width="match_parent"
+            android:layout_height="70dp"
+            android:background="?attr/colorPrimary"
+            tools:layout_editor_absoluteX="58dp"/>
+
+    <ImageView
+            android:id="@+id/ic_menu_done_client"
+            android:src="@drawable/ic_menu_done"
+            android:clickable="true"
+            app:layout_constraintTop_toTopOf="@+id/toolbar"
+            app:layout_constraintRight_toRightOf="@id/toolbar"
+            app:layout_constraintBottom_toBottomOf="@+id/toolbar"
+            android:layout_marginRight="10dp"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"/>
+
+    <ImageView
+            android:id="@+id/ic_menu_close_client"
+            android:src="@drawable/ic_close"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="360dp"
+            android:clickable="true"
+            app:layout_constraintBottom_toBottomOf="@+id/toolbar"
+            app:layout_constraintRight_toRightOf="@id/toolbar"
+            app:layout_constraintTop_toTopOf="@+id/toolbar"
+            app:layout_constraintVertical_bias="0.543" />
+
+    <TextView
+            android:id="@+id/toolbarLabel"
+            android:textColor="@color/white"
+            android:text="Новый клиент"
+            android:textSize="20dp"
+            android:textStyle="bold"
+            app:layout_constraintTop_toTopOf="@+id/toolbar"
+            app:layout_constraintLeft_toLeftOf="@+id/toolbar"
+            app:layout_constraintRight_toRightOf="@+id/toolbar"
+            app:layout_constraintBottom_toBottomOf="@+id/toolbar"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"/>
+
+    <TextView
+            android:id="@+id/mainDivider1"
+            android:background="@color/gray1"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/toolbar"
+            app:layout_constraintBottom_toTopOf="@+id/clientRemarkEditTextDivider"
+            android:layout_width="1dp"
+            app:layout_constraintHorizontal_bias="0.2"
+            android:layout_height="0dp"
+            android:fontFamily="sans-serif-light"/>
+
+    <ImageView
+            android:id="@+id/ic_face"
+            android:src="@drawable/ic_face"
+            app:layout_constraintTop_toBottomOf="@+id/toolbar"
+            app:layout_constraintBottom_toTopOf="@id/surnameEditTextDivider"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="@id/mainDivider1"
+            android:layout_height="25dp"
+            android:layout_width="25dp"
+            android:layout_marginRight="8dp"/>
+
+    <EditText
+            android:id="@+id/nameEditText"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:background="@null"
+            app:layout_constraintRight_toRightOf="parent"
+            android:hint="Имя клиента..."
+            app:layout_constraintTop_toBottomOf="@+id/toolbar"
+            app:layout_constraintLeft_toRightOf="@+id/mainDivider1"
+            android:layout_marginTop="15dp"
+            android:layout_marginLeft="8dp"
+            android:textSize="18sp"/>
+
+    <TextView
+            android:id="@+id/nameEditTextDivider"
+            android:background="@color/gray1"
+            app:layout_constraintLeft_toLeftOf="@id/mainDivider1"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/nameEditText"
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_marginTop="15dp"/>
+
+    <EditText
+            android:id="@+id/surnameEditText"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:background="@null"
+            app:layout_constraintRight_toRightOf="parent"
+            android:hint="Фамилия клиента..."
+            app:layout_constraintTop_toBottomOf="@+id/nameEditTextDivider"
+            app:layout_constraintLeft_toRightOf="@+id/mainDivider1"
+            android:layout_marginTop="15dp"
+            android:layout_marginLeft="8dp"
+            android:textSize="18sp"/>
+
+    <TextView
+            android:id="@+id/surnameEditTextDivider"
+            android:background="@color/gray1"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/surnameEditText"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="15dp"/>
+
+    <ImageView
+            android:id="@+id/ic_telephone"
+            android:src="@drawable/ic_phone"
+            app:layout_constraintTop_toBottomOf="@+id/surnameEditTextDivider"
+            app:layout_constraintBottom_toTopOf="@id/phoneNumberEditTextDivider2"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="@id/mainDivider1"
+            android:layout_height="25dp"
+            android:layout_width="25dp"
+            android:layout_marginRight="8dp"/>
+
+    <com.aco.pmu.clients.MaskedEditText
+            android:id="@+id/phoneNumberEditText1"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:background="@null"
+            android:layout_marginTop="15dp"
+            android:layout_marginLeft="8dp"
+            app:layout_constraintTop_toBottomOf="@id/surnameEditTextDivider"
+            app:layout_constraintLeft_toRightOf="@+id/mainDivider1"
+            app:layout_constraintRight_toRightOf="parent"
+            android:inputType="number"
+            app:mask="+7 (***) ***-**-**"
+            app:notMaskedSymbol="*"
+            app:maskIconColor="@color/gray1"/>
+
+    <TextView
+            android:id="@+id/phoneNumberEditTextDivider1"
+            android:background="@color/gray1"
+            app:layout_constraintLeft_toLeftOf="@id/mainDivider1"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/phoneNumberEditText1"
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_marginTop="15dp"/>
+
+    <com.aco.pmu.clients.MaskedEditText
+            android:id="@+id/phoneNumberEditText2"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:background="@null"
+            android:layout_marginTop="15dp"
+            android:layout_marginLeft="8dp"
+            app:layout_constraintTop_toBottomOf="@id/phoneNumberEditTextDivider1"
+            app:layout_constraintLeft_toRightOf="@+id/mainDivider1"
+            app:layout_constraintRight_toRightOf="parent"
+            android:hint="Номер телефона клиента..."
+            android:inputType="number"
+            app:mask="+7 (***) ***-**-**"
+            app:notMaskedSymbol="*"/>
+
+    <TextView
+            android:id="@+id/phoneNumberEditTextDivider2"
+            android:background="@color/gray1"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/phoneNumberEditText2"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="15dp"/>
+
+    <ImageView
+            android:id="@+id/ic_remarks"
+            android:src="@drawable/ic_remarks"
+            app:layout_constraintTop_toBottomOf="@+id/phoneNumberEditTextDivider2"
+            app:layout_constraintBottom_toTopOf="@id/clientRemarkEditTextDivider"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="@id/mainDivider1"
+            android:layout_height="25dp"
+            android:layout_width="25dp"
+            android:layout_marginRight="8dp"/>
+
+
+    <EditText
+            android:id="@+id/clientRemarkEditText"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:background="@null"
+            android:hint="Заметки..."
+            app:layout_constraintTop_toBottomOf="@+id/phoneNumberEditTextDivider2"
+            app:layout_constraintLeft_toRightOf="@+id/mainDivider1"
+            app:layout_constraintRight_toRightOf="parent"
+            android:layout_marginTop="15dp"
+            android:layout_marginLeft="8dp"
+            android:textSize="18sp"/>
+
+    <TextView
+            android:id="@+id/clientRemarkEditTextDivider"
+            android:background="@color/gray1"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/clientRemarkEditText"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="15dp"/>
+
+    <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/records_recycler_view"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            app:layout_constraintTop_toBottomOf="@id/clientRemarkEditTextDivider"
+            app:layout_constraintBottom_toTopOf="@id/toolbar2"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"
+            tools:listitem="@layout/item_records"/>
+
+    <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar2"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:background="?attr/colorPrimary"
+            app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+            app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+            tools:layout_editor_absoluteX="0dp"
+            tools:ignore="MissingConstraints"
+            android:layout_marginBottom="0dp"
+            app:layout_constraintBottom_toBottomOf="parent"/>
+
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,0 +1,639 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/black"
+        tools:context=".records.AddRecordActivity">
+
+    <TextView
+            android:id="@+id/toolbar"
+            app:layout_constraintTop_toTopOf="parent"
+            android:layout_width="match_parent"
+            android:layout_height="70dp"
+            android:background="?attr/colorPrimary"
+            tools:layout_editor_absoluteX="58dp"/>
+
+    <ImageView
+            android:id="@+id/ic_menu_done_record"
+            android:src="@drawable/ic_menu_done"
+            android:clickable="true"
+            app:layout_constraintTop_toTopOf="@+id/toolbar"
+            app:layout_constraintRight_toRightOf="@id/toolbar"
+            app:layout_constraintBottom_toBottomOf="@+id/toolbar"
+            android:layout_marginRight="10dp"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"/>
+
+    <ImageView
+            android:id="@+id/ic_menu_close_record"
+            android:src="@drawable/ic_close"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="360dp"
+            android:clickable="true"
+            app:layout_constraintBottom_toBottomOf="@+id/toolbar"
+            app:layout_constraintRight_toRightOf="@id/toolbar"
+            app:layout_constraintTop_toTopOf="@+id/toolbar"
+            app:layout_constraintVertical_bias="0.543" />
+
+    <TextView
+            android:id="@+id/toolbarLabel"
+            android:textColor="@color/white"
+            android:text="Новая запись"
+            android:textSize="20dp"
+            android:textStyle="bold"
+            app:layout_constraintTop_toTopOf="@+id/toolbar"
+            app:layout_constraintLeft_toLeftOf="@+id/toolbar"
+            app:layout_constraintRight_toRightOf="@+id/toolbar"
+            app:layout_constraintBottom_toBottomOf="@+id/toolbar"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"/>
+
+    <TextView
+            android:id="@+id/mainDivider1"
+            android:background="@color/gray1"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/toolbar"
+            app:layout_constraintBottom_toTopOf="@+id/phoneNumberSelectSelectDivider1"
+            android:layout_width="1dp"
+            app:layout_constraintHorizontal_bias="0.2"
+            android:layout_height="0dp"
+            android:fontFamily="sans-serif-light"/>
+
+    <ImageView
+            android:id="@+id/ic_calendar"
+            android:src="@drawable/ic_calendar"
+            app:layout_constraintTop_toBottomOf="@id/toolbar"
+            app:layout_constraintBottom_toTopOf="@id/dateTimeSelectDivider"
+            app:layout_constraintLeft_toLeftOf="parent"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:layout_marginLeft="8dp"/>
+
+
+    <ImageView
+            android:id="@+id/ic_clock"
+            android:src="@drawable/ic_clock"
+            app:layout_constraintTop_toBottomOf="@id/toolbar"
+            app:layout_constraintBottom_toTopOf="@id/dateTimeSelectDivider"
+            app:layout_constraintRight_toRightOf="@id/mainDivider1"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:layout_marginRight="8dp"/>
+
+
+    <TextView
+            android:id="@+id/dateSelectTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:hint="Выберите дату..."
+            android:clickable="true"
+            android:focusable="true"
+            app:layout_constraintTop_toBottomOf="@id/toolbar"
+            app:layout_constraintLeft_toLeftOf="@+id/mainDivider1"
+            android:layout_marginTop="15dp"
+            android:layout_marginLeft="8dp"
+            android:textSize="15sp"
+            android:textAppearance="@style/TextAppearance.AppCompat.Large"/>
+
+    <TextView
+            android:id="@+id/timeSelectTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:hint="Выберите время..."
+            android:clickable="true"
+            android:focusable="true"
+            app:layout_constraintTop_toBottomOf="@id/toolbar"
+            app:layout_constraintLeft_toRightOf="@+id/dateSelectTextView"
+            android:layout_marginTop="15dp"
+            android:layout_marginLeft="8dp"
+            android:textSize="15sp"
+            android:textAppearance="@style/TextAppearance.AppCompat.Large"/>
+
+    <TextView
+            android:id="@+id/dateTimeSelectDivider"
+            android:background="@color/gray1"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/dateSelectTextView"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="15dp"/>
+
+    <ImageView
+            android:id="@+id/ic_face"
+            android:src="@drawable/ic_face"
+            app:layout_constraintTop_toBottomOf="@+id/dateTimeSelectDivider"
+            app:layout_constraintBottom_toTopOf="@id/nameSurnameSelectDivider"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="@id/mainDivider1"
+            android:layout_height="25dp"
+            android:layout_width="25dp"
+            android:layout_marginRight="8dp"/>
+
+    <TextView
+            android:id="@+id/nameSurnameSelectTextView"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:hint="Выберите клиента..."
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/dateTimeSelectDivider"
+            app:layout_constraintLeft_toRightOf="@+id/mainDivider1"
+            android:layout_marginTop="15dp"
+            android:layout_marginLeft="8dp"
+            android:textSize="15sp"
+            android:textAppearance="@style/TextAppearance.AppCompat.Large"
+            android:clickable="true"/>
+
+    <TextView
+            android:id="@+id/nameSurnameSelectDivider"
+            android:background="@color/gray1"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/nameSurnameSelectTextView"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="15dp"/>
+
+    <ImageView
+            android:id="@+id/ic_telephone1"
+            android:src="@drawable/ic_phone"
+            app:layout_constraintTop_toBottomOf="@+id/nameSurnameSelectDivider"
+            app:layout_constraintBottom_toTopOf="@id/phoneNumberSelectSelectDivider1"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="@id/mainDivider1"
+            android:layout_height="25dp"
+            android:layout_width="25dp"
+            android:layout_marginRight="8dp"/>
+
+    <TextView
+            android:id="@+id/phoneNumberSelectTextView1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:hint="Номер телефона..."
+            app:layout_constraintTop_toBottomOf="@+id/nameSurnameSelectDivider"
+            app:layout_constraintLeft_toRightOf="@+id/mainDivider1"
+            android:layout_marginTop="15dp"
+            android:layout_marginLeft="8dp"
+            android:textSize="15sp"
+            android:textIsSelectable="true"
+            android:textAppearance="@style/TextAppearance.AppCompat.Large"/>
+
+    <TextView
+            android:id="@+id/phoneNumberSelectSelectDivider1"
+            android:background="@color/gray1"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/phoneNumberSelectTextView1"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="15dp"
+            android:visibility="invisible"/>
+
+<androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/additionalPhoneNumber"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            app:layout_constraintTop_toBottomOf="@id/phoneNumberSelectSelectDivider1"
+            android:visibility="invisible">
+
+    <TextView
+            android:id="@+id/mainDivider2"
+            android:background="@color/gray1"
+            app:layout_constraintLeft_toLeftOf="@id/additionalPhoneNumber"
+            app:layout_constraintRight_toRightOf="@id/additionalPhoneNumber"
+            app:layout_constraintTop_toTopOf="@+id/additionalPhoneNumber"
+            app:layout_constraintBottom_toBottomOf="@+id/additionalPhoneNumber"
+            android:layout_width="1dp"
+            app:layout_constraintHorizontal_bias="0.2"
+            android:layout_height="0dp"
+            android:fontFamily="sans-serif-light"
+            android:visibility="invisible"/>
+
+    <ImageView
+            android:id="@+id/ic_telephone2"
+            android:src="@drawable/ic_phone"
+            app:layout_constraintTop_toTopOf="@+id/additionalPhoneNumber"
+            app:layout_constraintBottom_toBottomOf="@id/additionalPhoneNumber"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="@id/mainDivider2"
+            android:layout_height="25dp"
+            android:layout_width="25dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="12dp"
+            android:visibility="invisible"/>
+
+    <TextView
+            android:id="@+id/phoneNumberSelectTextView2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:hint="Дополнительный номер телефона..."
+            app:layout_constraintTop_toTopOf="@+id/additionalPhoneNumber"
+            app:layout_constraintLeft_toRightOf="@+id/mainDivider2"
+            android:layout_marginTop="15dp"
+            android:layout_marginBottom="15dp"
+            android:layout_marginLeft="8dp"
+            android:textSize="15sp"
+            android:textIsSelectable="true"
+            android:textAppearance="@style/TextAppearance.AppCompat.Large"
+            android:visibility="invisible"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+
+    <TextView
+            android:id="@+id/phoneNumberSelectSelectDivider2"
+            android:background="@color/gray1"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/phoneNumberSelectSelectDivider1"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"/>
+
+    <TextView
+            android:id="@+id/mainDivider3"
+            android:background="@color/gray1"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/phoneNumberSelectSelectDivider2"
+            app:layout_constraintBottom_toTopOf="@+id/doneDivider"
+            android:layout_width="1dp"
+            app:layout_constraintHorizontal_bias="0.2"
+            android:layout_height="0dp"
+            android:fontFamily="sans-serif-light"/>
+
+
+    <ImageView
+            android:id="@+id/ic_procedure"
+            android:src="@drawable/ic_procedure"
+            app:layout_constraintTop_toBottomOf="@+id/phoneNumberSelectSelectDivider2"
+            app:layout_constraintBottom_toTopOf="@id/procedureSelectDivider2"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="@id/mainDivider3"
+            android:layout_height="25dp"
+            android:layout_width="25dp"
+            android:layout_marginRight="8dp"/>
+
+    <TextView
+            android:id="@+id/procedureSelectTextView"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:hint="Выберите процедуру..."
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/phoneNumberSelectSelectDivider2"
+            app:layout_constraintLeft_toRightOf="@+id/mainDivider3"
+            android:layout_marginTop="15dp"
+            android:layout_marginLeft="8dp"
+            android:textSize="15sp"
+            android:textColor="@color/white"/>
+
+    <TextView
+            android:id="@+id/procedureSelectDivider2"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="15dp"
+            android:background="@color/gray1"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/procedureSelectTextView" />
+
+    <ImageView
+            android:id="@+id/ic_comments"
+            android:src="@drawable/ic_comments"
+            app:layout_constraintTop_toBottomOf="@+id/procedureSelectDivider2"
+            app:layout_constraintBottom_toTopOf="@id/commentsDivider"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="@id/mainDivider3"
+            android:layout_height="25dp"
+            android:layout_width="25dp"
+            android:layout_marginRight="8dp"/>
+
+    <EditText
+            android:id="@+id/commentsEditText"
+            android:layout_width="250dp"
+            android:layout_height="wrap_content"
+            android:hint="Комментарии..."
+            app:layout_constraintTop_toBottomOf="@+id/procedureSelectDivider2"
+            app:layout_constraintLeft_toRightOf="@+id/mainDivider3"
+            android:layout_marginTop="15dp"
+            android:layout_marginLeft="8dp"
+            android:textSize="15sp"
+            android:textAppearance="@style/TextAppearance.AppCompat.Large"
+            android:clickable="true"
+            android:background="@null"
+            android:textColor="@color/white"/>
+
+    <TextView
+            android:id="@+id/commentsDivider"
+            android:background="@color/gray1"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/commentsEditText"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="15dp"/>
+
+    <ImageView
+            android:id="@+id/ic_done"
+            android:src="@drawable/ic_done"
+            app:layout_constraintTop_toBottomOf="@+id/commentsDivider"
+            app:layout_constraintBottom_toTopOf="@id/doneDivider"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="@id/mainDivider3"
+            android:layout_height="25dp"
+            android:layout_width="25dp"
+            android:layout_marginRight="8dp"/>
+
+    <TextView
+            android:id="@+id/doneTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Процедура не выполнена"
+            android:textColor="@color/red0"
+            app:layout_constraintTop_toBottomOf="@+id/commentsDivider"
+            app:layout_constraintLeft_toRightOf="@+id/mainDivider3"
+            android:layout_marginTop="15dp"
+            android:layout_marginLeft="8dp"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:textAppearance="@style/TextAppearance.AppCompat.Large"/>
+
+    <Switch
+            android:id="@+id/doneSwitch"
+            android:layout_width="60dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/commentsDivider"
+            app:layout_constraintBottom_toTopOf="@id/doneDivider"
+            android:textColorHighlight="@color/red0"
+            android:theme="@style/SwitchCompatTheme"/>
+
+    <TextView
+            android:id="@+id/doneDivider"
+            android:background="@color/gray1"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/doneTextView"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="15dp"/>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/addRecordFrame"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            app:layout_constraintTop_toBottomOf="@id/doneDivider"
+            app:layout_constraintBottom_toTopOf="@id/toolbar2"
+            android:visibility="invisible">
+
+        <TextView
+                android:id="@+id/mainDivider4"
+                android:background="@color/gray1"
+                app:layout_constraintLeft_toLeftOf="@id/addRecordFrame"
+                app:layout_constraintRight_toRightOf="@id/addRecordFrame"
+                app:layout_constraintTop_toTopOf="@+id/addRecordFrame"
+                app:layout_constraintBottom_toTopOf="@+id/pigmentSelectDivider3"
+                android:layout_width="1dp"
+                app:layout_constraintHorizontal_bias="0.2"
+                android:layout_height="0dp"
+                android:fontFamily="sans-serif-light"/>
+
+    <ImageView
+            android:id="@+id/ic_price"
+            android:src="@drawable/ic_price"
+            app:layout_constraintTop_toTopOf="@+id/addRecordFrame"
+            app:layout_constraintBottom_toTopOf="@id/priceSelectDivider"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="@id/mainDivider4"
+            android:layout_height="25dp"
+            android:layout_width="25dp"
+            android:layout_marginRight="8dp"/>
+
+    <EditText
+            android:id="@+id/priceEditText"
+            android:layout_width="250dp"
+            android:layout_height="wrap_content"
+            android:hint="Укажите стоимость процедуры..."
+            app:layout_constraintTop_toTopOf="@+id/addRecordFrame"
+            app:layout_constraintLeft_toRightOf="@+id/mainDivider4"
+            android:layout_marginTop="15dp"
+            android:layout_marginLeft="8dp"
+            android:textSize="15sp"
+            android:textAppearance="@style/TextAppearance.AppCompat.Large"
+            android:background="@null"
+            android:inputType="phone"
+            android:maxLength="5"
+            android:enabled="false"
+            android:textColor="@color/white"/>
+
+    <TextView
+            android:id="@+id/KZTTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
+            android:layout_marginBottom="16dp"
+            android:text="тг."
+            android:textColor="@color/white"
+            app:layout_constraintTop_toTopOf="@+id/addRecordFrame"
+            app:layout_constraintBottom_toTopOf="@+id/priceSelectDivider"
+            app:layout_constraintEnd_toStartOf="@id/mainDivider4"
+            app:layout_constraintStart_toEndOf="parent"
+            android:layout_marginRight="190dp"
+            android:visibility="invisible"/>
+
+    <TextView
+            android:id="@+id/priceSelectDivider"
+            android:background="@color/gray1"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/priceEditText"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="15dp"/>
+
+
+    <ImageView
+            android:id="@+id/ic_pigment1"
+            android:src="@drawable/ic_pigment"
+            app:layout_constraintTop_toBottomOf="@+id/priceSelectDivider"
+            app:layout_constraintBottom_toTopOf="@id/pigmentSelectDivider1"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="@id/mainDivider4"
+            android:layout_height="25dp"
+            android:layout_width="25dp"
+            android:layout_marginRight="8dp"/>
+
+    <TextView
+            android:id="@+id/pigmentsSelectTextView1"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:hint="Выберите пигмент..."
+            app:layout_constraintTop_toBottomOf="@+id/priceSelectDivider"
+            app:layout_constraintLeft_toRightOf="@+id/mainDivider4"
+            android:layout_marginTop="15dp"
+            android:layout_marginLeft="8dp"
+            android:textSize="15sp"
+            android:textColor="@color/white"/>
+
+    <TextView
+            android:id="@+id/dropsQuantityTextView1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
+            android:layout_marginBottom="16dp"
+            android:text="капл."
+            app:layout_constraintBottom_toTopOf="@+id/priceSelectDivider"
+            app:layout_constraintEnd_toStartOf="@+id/spinner1"
+            app:layout_constraintStart_toEndOf="@+id/pigmentsSelectTextView1"
+            app:layout_constraintTop_toBottomOf="@+id/pigmentSelectDivider1" />
+
+    <Spinner
+            android:id="@+id/spinner1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/priceSelectDivider"
+            app:layout_constraintLeft_toRightOf="@id/dropsQuantityTextView1"
+            app:layout_constraintBottom_toTopOf="@id/pigmentSelectDivider1"
+            android:background="@drawable/ic_arrow_drop_down"/>
+
+
+    <TextView
+            android:id="@+id/pigmentSelectDivider1"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="15dp"
+            android:background="@color/gray1"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/pigmentsSelectTextView1" />
+
+    <ImageView
+            android:id="@+id/ic_pigment2"
+            android:src="@drawable/ic_pigment"
+            app:layout_constraintTop_toBottomOf="@+id/pigmentSelectDivider1"
+            app:layout_constraintBottom_toTopOf="@id/pigmentSelectDivider2"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="@id/mainDivider4"
+            android:layout_height="25dp"
+            android:layout_width="25dp"
+            android:layout_marginRight="8dp"/>
+
+    <TextView
+            android:id="@+id/pigmentsSelectTextView2"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:hint="Выберите пигмент..."
+            app:layout_constraintTop_toBottomOf="@+id/pigmentSelectDivider1"
+            app:layout_constraintLeft_toRightOf="@+id/mainDivider4"
+            android:layout_marginTop="15dp"
+            android:layout_marginLeft="8dp"
+            android:textSize="15sp"
+            android:textColor="@color/white"/>
+
+    <TextView
+            android:id="@+id/dropsQuantityTextView2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
+            android:layout_marginBottom="16dp"
+            android:text="капл."
+            app:layout_constraintBottom_toTopOf="@+id/pigmentSelectDivider1"
+            app:layout_constraintEnd_toStartOf="@+id/spinner2"
+            app:layout_constraintStart_toEndOf="@+id/pigmentsSelectTextView2"
+            app:layout_constraintTop_toBottomOf="@+id/pigmentSelectDivider2"/>
+
+    <Spinner
+            android:id="@+id/spinner2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/pigmentSelectDivider1"
+            app:layout_constraintLeft_toRightOf="@id/dropsQuantityTextView2"
+            app:layout_constraintBottom_toTopOf="@id/pigmentSelectDivider2"
+            android:background="@drawable/ic_arrow_drop_down"/>
+
+    <TextView
+            android:id="@+id/pigmentSelectDivider2"
+            android:background="@color/gray1"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/pigmentsSelectTextView2"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="15dp"/>
+
+    <ImageView
+            android:id="@+id/ic_pigment3"
+            android:src="@drawable/ic_pigment"
+            app:layout_constraintTop_toBottomOf="@+id/pigmentSelectDivider2"
+            app:layout_constraintBottom_toTopOf="@id/pigmentSelectDivider3"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="@id/mainDivider4"
+            android:layout_height="25dp"
+            android:layout_width="25dp"
+            android:layout_marginRight="8dp"/>
+
+    <TextView
+            android:id="@+id/pigmentsSelectTextView3"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:hint="Выберите пигмент..."
+            app:layout_constraintTop_toBottomOf="@+id/pigmentSelectDivider2"
+            app:layout_constraintLeft_toRightOf="@+id/mainDivider4"
+            android:layout_marginTop="15dp"
+            android:layout_marginLeft="8dp"
+            android:textSize="15sp"
+            android:textColor="@color/white"/>
+
+    <TextView
+            android:id="@+id/dropsQuantityTextView3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
+            android:layout_marginBottom="16dp"
+            android:text="капл."
+            app:layout_constraintBottom_toTopOf="@+id/pigmentSelectDivider2"
+            app:layout_constraintEnd_toStartOf="@+id/spinner3"
+            app:layout_constraintStart_toEndOf="@+id/pigmentsSelectTextView3"
+            app:layout_constraintTop_toBottomOf="@+id/pigmentSelectDivider3"/>
+
+    <Spinner
+            android:id="@+id/spinner3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/pigmentSelectDivider2"
+            app:layout_constraintLeft_toRightOf="@id/dropsQuantityTextView3"
+            app:layout_constraintBottom_toTopOf="@id/pigmentSelectDivider3"
+            android:background="@drawable/ic_arrow_drop_down"/>
+
+    <TextView
+            android:id="@+id/pigmentSelectDivider3"
+            android:background="@color/gray1"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/pigmentsSelectTextView3"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="15dp"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar2"
+            android:layout_width="411dp"
+            android:layout_height="56dp"
+            android:background="?attr/colorPrimary"
+            app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+            app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+            tools:layout_editor_absoluteX="0dp"
+            tools:ignore="MissingConstraints"
+            android:layout_marginBottom="0dp"
+            app:layout_constraintBottom_toBottomOf="parent"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
