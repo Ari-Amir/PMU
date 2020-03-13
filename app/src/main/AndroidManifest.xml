@@ -3,10 +3,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.aco.pmu">
 
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
-    <uses-permission android:name="android.permission.WRITE_SECURE_SETTINGS"
-        tools:ignore="ProtectedPermissions" />
+    <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
 
 
     <application
@@ -21,6 +20,10 @@
         <activity android:name=".clients.AddClientActivity" />
         <activity android:name=".pigments.AddPigmentsActivity" />
         <activity android:name=".procedures.AddProcedureActivity" />
+        <activity android:name=".googleDrive.RunTimePermission" />
+        <activity android:name=".googleDrive.GoogleDrive" />
+        <activity android:name=".googleDrive1.GoogleDrive1" />
+
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -28,6 +31,11 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+
+        <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version"/>
     </application>
 
 </manifest>

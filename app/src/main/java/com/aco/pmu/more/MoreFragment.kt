@@ -1,6 +1,7 @@
 package com.aco.pmu.more
 
 
+import android.content.Intent
 import android.os.Bundle
 import android.os.Environment
 import android.util.Log
@@ -10,6 +11,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.aco.pmu.R
+import com.aco.pmu.googleDrive1.GoogleDrive1
 import com.aco.pmu.pigments.PigmentsFragment
 import com.aco.pmu.procedures.ProceduresFragment
 import kotlinx.android.synthetic.main.fragment_more.*
@@ -44,12 +46,16 @@ class MoreFragment : Fragment() {
                 ?.commit()
         }
 
-        backupButton.setOnClickListener {
-            backup()
-        }
+//        backupButton.setOnClickListener {
+//            backup()
+//        }
+//
+//        restoreButton.setOnClickListener {
+//            restore()
+//        }
 
-        restoreButton.setOnClickListener {
-            restore()
+        backupAndRestoreButton.setOnClickListener {
+            startActivity(Intent(context, GoogleDrive1::class.java))
         }
     }
 
@@ -103,13 +109,18 @@ class MoreFragment : Fragment() {
             val databaseDirectory = Environment.getDataDirectory()
             val storageDirectory = Environment.getExternalStorageDirectory()
             if (storageDirectory.canWrite()) {
+
                 val databaseFileName1 = "//data//com.aco.pmu//databases//PMUs_database"
                 val storageFileName1 = "PMUs_database"
+
                 val databaseFile1 = File(databaseDirectory, databaseFileName1)
                 val storageFile1 = File(storageDirectory, storageFileName1)
-                val input1 = FileInputStream(storageFile1).getChannel()
+
                 val output1 = FileOutputStream(databaseFile1).getChannel()
+                val input1 = FileInputStream(storageFile1).getChannel()
+
                 output1.transferFrom(input1, 0, input1.size())
+
                 input1.close()
                 output1.close()
 
