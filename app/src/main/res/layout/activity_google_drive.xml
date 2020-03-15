@@ -8,8 +8,6 @@
         android:background="@color/black"
         tools:context=".records.AddRecordActivity">
 
-    <!--Toolbar-->
-
     <TextView
             android:id="@+id/toolbar"
             app:layout_constraintTop_toTopOf="parent"
@@ -18,52 +16,87 @@
             android:background="?attr/colorPrimary"
             tools:layout_editor_absoluteX="58dp"/>
 
+<!--    <ImageView-->
+<!--            android:id="@+id/ic_menu_close_backup"-->
+<!--            android:src="@drawable/ic_close"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_marginRight="360dp"-->
+<!--            android:clickable="true"-->
+<!--            app:layout_constraintBottom_toBottomOf="@+id/toolbar"-->
+<!--            app:layout_constraintRight_toRightOf="@id/toolbar"-->
+<!--            app:layout_constraintTop_toTopOf="@+id/toolbar"-->
+<!--            app:layout_constraintVertical_bias="0.543" />-->
+
     <ImageView
-            android:id="@+id/ic_menu_close_backup"
-            android:src="@drawable/ic_close"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginRight="360dp"
-            android:clickable="true"
-            app:layout_constraintBottom_toBottomOf="@+id/toolbar"
-            app:layout_constraintRight_toRightOf="@id/toolbar"
-            app:layout_constraintTop_toTopOf="@+id/toolbar"
-            app:layout_constraintVertical_bias="0.543" />
+        android:id="@+id/logo_google_drive"
+        android:src="@drawable/ic_google_drive"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="@+id/toolbar"
+        app:layout_constraintRight_toRightOf="@id/toolbar"
+        app:layout_constraintLeft_toLeftOf="@id/toolbar"
+        app:layout_constraintTop_toTopOf="@+id/toolbar"/>
+
+
+
+    <ImageView
+        android:id="@+id/gphoto"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:paddingStart="30dp"
+        app:layout_constraintTop_toBottomOf="@+id/toolbar"
+        app:layout_constraintLeft_toLeftOf="parent" />
 
     <TextView
-            android:id="@+id/toolbarLabel"
-            android:textColor="@color/white"
-            android:text="Google Drive"
-            android:textSize="20dp"
-            android:textStyle="bold"
-            app:layout_constraintTop_toTopOf="@+id/toolbar"
-            app:layout_constraintLeft_toLeftOf="@+id/toolbar"
-            app:layout_constraintRight_toRightOf="@+id/toolbar"
-            app:layout_constraintBottom_toBottomOf="@+id/toolbar"
-            android:layout_height="wrap_content"
-            android:layout_width="wrap_content"/>
+        android:id="@+id/gname"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:textColor="@color/white"
+        android:paddingStart="30dp"
+        android:paddingTop="20dp"
+        android:text="User Name"
+        android:textSize="20dp"
+        android:textStyle="bold"
+        app:layout_constraintTop_toBottomOf="@+id/toolbar"
+        app:layout_constraintLeft_toRightOf="@+id/gphoto" />
+
+    <TextView
+        android:id="@+id/gmail"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:textColor="@color/white"
+        android:paddingStart="30dp"
+        android:paddingTop="20dp"
+        android:text="user@gmail.com"
+        android:textSize="15dp"
+        android:textStyle="bold"
+        app:layout_constraintTop_toBottomOf="@+id/gname"
+        app:layout_constraintLeft_toRightOf="@+id/gphoto" />
 
    <Button
        android:id="@+id/btnBackup"
-       android:layout_width="wrap_content"
+       android:layout_width="match_parent"
        android:layout_height="wrap_content"
-       android:text="Backup"
-       app:layout_constraintTop_toBottomOf="@id/toolbar"
-       app:layout_constraintBottom_toTopOf="@id/btnRestore"
-       app:layout_constraintRight_toRightOf="parent"
-       app:layout_constraintLeft_toLeftOf="parent"/>
+       app:layout_constraintTop_toBottomOf="@+id/gphoto"
+       android:text="Сохранить данные на Google Disk"
+       android:textSize="15sp"
+       android:layout_marginTop="15dp"
+       android:layout_marginLeft="15dp"
+       android:layout_marginRight="15dp"
+       android:textAppearance="@style/TextAppearance.AppCompat.Large"/>
 
     <Button
         android:id="@+id/btnRestore"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Restore"
         app:layout_constraintTop_toBottomOf="@id/btnBackup"
-        app:layout_constraintBottom_toTopOf="@id/toolbar2"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"/>
-
-
+        android:text="Восстановить данные с Google Disk'а"
+        android:textSize="15sp"
+        android:layout_marginTop="15dp"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
+        android:textAppearance="@style/TextAppearance.AppCompat.Large"/>
 
     <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar2"
@@ -77,16 +110,17 @@
             android:layout_marginBottom="0dp"
             app:layout_constraintBottom_toBottomOf="parent"/>
 
-    <TextView
-        android:padding="8dp"
-        android:gravity="center"
-        android:id="@+id/email"
+    <com.example.kloadingspin.KLoadingSpin
+        android:id="@+id/loader"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintBottom_toTopOf="@id/toolbar2"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
-
-
+        android:layout_height="match_parent"
+        app:primarySpinnerColor="@color/black"
+        app:rotationSpeedInMs="1000"
+        app:backgroundColor="#D8000000"
+        app:secondarySpinnerColor="@color/green"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

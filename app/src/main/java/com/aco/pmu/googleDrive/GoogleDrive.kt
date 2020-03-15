@@ -1,155 +1,261 @@
 package com.aco.pmu.googleDrive
 
+import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.os.Environment
+import android.util.Log
 import android.widget.Toast
 import com.aco.pmu.R
+import com.aco.pmu.googleDrive.DriveServiceHelper.Companion.getGoogleDriveService
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.Scope
-import com.google.api.client.extensions.android.http.AndroidHttp
-import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential
-import com.google.api.client.json.gson.GsonFactory
-import com.google.api.services.drive.Drive
 import com.google.api.services.drive.DriveScopes
 import kotlinx.android.synthetic.main.activity_google_drive.*
 import java.io.File
-import java.io.FileOutputStream
-import java.lang.StringBuilder
-import java.util.*
 
 
-class GoogleDrive: RunTimePermission()  {
+class GoogleDrive : RunTimePermission() {
+    private var googleSignInClient: GoogleSignInClient? = null
+    private var driveServiceHelper: DriveServiceHelper? = null
 
-    private val RQ_GOOGLE_SIGN_IN = 210
-    private val BACKUP_FILE = "test.txt"
-    private var isRestore = false
-    private var mGoogleApiClient: GoogleSignInClient? = null
-    private var mDriveServiceHelper: DriveServiceHelper? = null
-    private var lastUploadFileId: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_google_drive)
 
+        var fileNameToDelete = 0
+        var fileNameToDownload = 0
+        var fileNameToUpload = 0
+        var fileToGetGoogleId = 0
+        var successCounter = 0
+
+
         btnBackup.setOnClickListener {
             requestPermission(arrayOf(android.Manifest.permission.WRITE_EXTERNAL_STORAGE)) { isGranted ->
                 if (isGranted) {
-                    isRestore = false
-                    if (mDriveServiceHelper == null)
-                        googleAuth()
-                    else {
-                        val uploadTask = mDriveServiceHelper?.uploadFile(BACKUP_FILE, getFile())
-                        uploadTask?.addOnCompleteListener {
-                            lastUploadFileId = uploadTask.result
-                            println("lastUploadFileId==>$lastUploadFileId")
-                            Toast.makeText(this, "Backup upload successfully", Toast.LENGTH_LONG).show()
+                    loader.startAnimation()
+                    loader.setIsVisible(true)
+                    btnBackup.isEnabled = false
+                    btnRestore.isEnabled = false
+
+                    driveServiceHelper?.checkIsGoogleFolderExists("PMU")
+
+                    for (i in driveServiceHelper!!.getGoogleFileNames()) {
+                        driveServiceHelper!!.deleteGoogleFile(driveServiceHelper!!.getGoogleFileNames()[fileNameToDelete])
+                        fileNameToDelete += 1
+
+                        for (i in driveServiceHelper!!.getDatabaseFiles()) {
+                            driveServiceHelper!!.uploadFileToGoogle(
+                                    driveServiceHelper!!.getDatabaseFiles()[fileNameToUpload],
+                                    "text/plain"
+                                )
+                                ?.addOnSuccessListener { _ ->
+                                    successCounter += 1
+                                    if (successCounter == 3) {
+                                        loader.stopAnimation()
+                                        btnBackup.isEnabled = true
+                                        btnRestore.isEnabled = true
+                                        Toast.makeText(
+                                            this,
+                                            "Резервное копирование базы данных на Google Disk выполнено успешно",
+                                            Toast.LENGTH_LONG
+                                        ).show()
+                                        successCounter = 0
+                                        this.finish()
+                                    }
+                                }
+                                ?.addOnFailureListener { _ ->
+                                    loader.stopAnimation()
+                                    btnBackup.isEnabled = true
+                                    btnRestore.isEnabled = true
+                                    Toast.makeText(
+                                        this,
+                                        "Ошибка... попробуйте еще раз",
+                                        Toast.LENGTH_LONG
+                                    ).show()
+                                }
+                            fileNameToUpload += 1
+                            break
                         }
                     }
                 }
             }
         }
+
 
         btnRestore.setOnClickListener {
             requestPermission(arrayOf(android.Manifest.permission.WRITE_EXTERNAL_STORAGE)) { isGranted ->
                 if (isGranted) {
-                    isRestore = true
-                    if (mDriveServiceHelper == null)
-                        googleAuth()
-                    else {
-                        if (null != lastUploadFileId) {
-                            val downloadTask = mDriveServiceHelper?.readFile(lastUploadFileId)
-                            downloadTask?.addOnCompleteListener {
-                                println("Name==>${downloadTask.result?.first}")
-                                println("Content==>${downloadTask.result?.second}")
-                                Toast.makeText(this, "Backup download successfully", Toast.LENGTH_LONG)
-                                    .show()
-                            }
+                    loader.startAnimation()
+                    loader.setIsVisible(true)
+                    btnBackup.isEnabled = false
+                    btnRestore.isEnabled = false
+
+                    driveServiceHelper?.checkIsGoogleFolderExists("PMU")
+
+                    driveServiceHelper!!.getGoogleFileId(driveServiceHelper!!.getGoogleFileNames()[fileToGetGoogleId])
+                        .addOnSuccessListener { _ ->
+                            fileToGetGoogleId += 1
+                            driveServiceHelper!!.downloadGoogleFile(
+                                    File(
+                                        Environment.getDataDirectory(),
+                                        driveServiceHelper!!.getDatabaseFileNames()[fileNameToDownload]
+                                    ), driveServiceHelper!!.fileId
+                                )
+                                ?.addOnSuccessListener {
+                                    fileNameToDownload += 1
+                                    successCounter += 1
+
+
+                                    driveServiceHelper!!.getGoogleFileId(driveServiceHelper!!.getGoogleFileNames()[fileToGetGoogleId])
+                                        .addOnSuccessListener { _ ->
+                                            fileToGetGoogleId += 1
+                                            driveServiceHelper!!.downloadGoogleFile(
+                                                    File(
+                                                        Environment.getDataDirectory(),
+                                                        driveServiceHelper!!.getDatabaseFileNames()[fileNameToDownload]
+                                                    ), driveServiceHelper!!.fileId
+                                                )
+                                                ?.addOnSuccessListener {
+                                                    fileNameToDownload += 1
+                                                    successCounter += 1
+
+
+                                                    driveServiceHelper!!.getGoogleFileId(
+                                                            driveServiceHelper!!.getGoogleFileNames()[fileToGetGoogleId]
+                                                        )
+                                                        .addOnSuccessListener { _ ->
+                                                            fileToGetGoogleId += 1
+                                                            driveServiceHelper!!.downloadGoogleFile(
+                                                                    File(
+                                                                        Environment.getDataDirectory(),
+                                                                        driveServiceHelper!!.getDatabaseFileNames()[fileNameToDownload]
+                                                                    ), driveServiceHelper!!.fileId
+                                                                )
+                                                                ?.addOnSuccessListener {
+                                                                    fileNameToDownload += 1
+                                                                    successCounter += 1
+
+                                                                    if (successCounter == 3) {
+                                                                        loader.stopAnimation()
+                                                                        btnBackup.isEnabled = true
+                                                                        btnRestore.isEnabled = true
+                                                                        Toast.makeText(
+                                                                            this,
+                                                                            "Восстановление базы данных с Google Disk выполнено успешно",
+                                                                            Toast.LENGTH_LONG
+                                                                        ).show()
+                                                                        successCounter = 0
+                                                                        this.finish()
+                                                                    }
+                                                                }
+                                                        }
+                                                }
+                                        }
+                                }
                         }
-                    }
+                        .addOnFailureListener { _ ->
+                            loader.stopAnimation()
+                            btnBackup.isEnabled = true
+                            btnRestore.isEnabled = true
+                            Toast.makeText(this, "Ошибка... попробуйте еще раз", Toast.LENGTH_LONG)
+                                .show()
+                        }
                 }
             }
         }
-
-        ic_menu_close_backup.setOnClickListener {
-            finish()
-        }
     }
 
-    private fun googleAuth() {
-        val signInOptions = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-            .requestEmail()
-            .requestScopes(Scope(DriveScopes.DRIVE_FILE))
-            .build()
-        mGoogleApiClient = GoogleSignIn.getClient(this, signInOptions)
-        startActivityForResult(mGoogleApiClient!!.signInIntent, RQ_GOOGLE_SIGN_IN)
-    }
+    override fun onStart() {
+        super.onStart()
+        val account =
+            GoogleSignIn.getLastSignedInAccount(applicationContext)
+        if (account == null) {
+            signIn()
+        } else {
+            gmail!!.text = account.email
+            gname!!.text = account.displayName
+            Glide.with(applicationContext).load(account.photoUrl)
+                .thumbnail(0.8f)
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .into(gphoto)
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == RQ_GOOGLE_SIGN_IN && resultCode == RESULT_OK) {
-            val task = GoogleSignIn.getSignedInAccountFromIntent(data)
-            task.addOnSuccessListener {
-                val credential = GoogleAccountCredential.usingOAuth2(
-                    this,
-                    Collections.singleton(DriveScopes.DRIVE_FILE)
+            driveServiceHelper = DriveServiceHelper(
+                getGoogleDriveService(
+                    applicationContext,
+                    account,
+                    "appName"
                 )
-                credential.selectedAccount = it.account
-                val googleDriveService = Drive.Builder(
-                    AndroidHttp.newCompatibleTransport(), GsonFactory(),
-                    credential
-                ).setApplicationName(getString(R.string.app_name)).build()
+            )
+        }
+    }
 
-                mDriveServiceHelper = DriveServiceHelper(googleDriveService)
-                if (isRestore) {
-                    if (null != lastUploadFileId) {
-                        val downloadTask = mDriveServiceHelper?.readFile(lastUploadFileId)
-                        downloadTask?.addOnCompleteListener {
-                            println("Name==>${downloadTask.result?.first}")
-                            println("Content==>${downloadTask.result?.second}")
-                            Toast.makeText(this, "Backup download successfully", Toast.LENGTH_LONG).show()
-                        }
-                    }
-                } else {
-                    val uploadTask = mDriveServiceHelper?.uploadFile(BACKUP_FILE, generateFile())
-                    uploadTask?.addOnCompleteListener {
-                        lastUploadFileId = uploadTask.result
-                        println("lastUploadFileId==>$lastUploadFileId")
-                        Toast.makeText(this, "Backup upload successfully", Toast.LENGTH_LONG).show()
-                    }
-                }
+    private fun signIn() {
+        googleSignInClient = buildGoogleSignInClient()
+        startActivityForResult(
+            googleSignInClient!!.signInIntent,
+            REQUEST_CODE_SIGN_IN
+        )
+    }
+
+    private fun buildGoogleSignInClient(): GoogleSignInClient {
+        val signInOptions =
+            GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestScopes(Scope(DriveScopes.DRIVE_FILE))
+                .requestEmail()
+                .build()
+        return GoogleSignIn.getClient(applicationContext, signInOptions)
+    }
+
+    public override fun onActivityResult(
+        requestCode: Int,
+        resultCode: Int,
+        resultData: Intent?
+    ) {
+        when (requestCode) {
+            REQUEST_CODE_SIGN_IN -> if (resultCode == Activity.RESULT_OK && resultData != null) {
+                handleSignInResult(resultData)
             }
         }
+        super.onActivityResult(requestCode, resultCode, resultData)
     }
 
-    private fun generateFile(): File {
-        Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS).mkdir()
-        val file = File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS), BACKUP_FILE)
-        if (!file.exists())
-            file.createNewFile()
-
-        val data = StringBuilder()
-        for (i in 0..50) {
-            data.append("$i. First string is here to be written. First string is here to be written. First string is here to be written. First string is here to be written. First string is here to be written. First string is here to be written. First string is here to be written. First string is here to be written. First string is here to be written. First string is here to be written. First string is here to be written. First string is here to be written. First string is here to be written. First string is here to be written. First string is here to be written. First string is here to be written. First string is here to be written. First string is here to be written. First string is here to be written. First string is here to be written. First string is here to be written. First string is here to be written. First string is here to be written. First string is here to be written. First string is here to be written. First string is here to be written. First string is here to be written. First string is here to be written. First string is here to be written. First string is here to be written. First string is here to be written. First string is here to be written. First string is here to be written. First string is here to be written. First string is here to be written. First string is here to be written. First string is here to be written. First string is here to be written. First string is here to be written. First string is here to be written. First string is here to be written. First string is here to be written. First string is here to be written. First string is here to be written. First string is here to be written. First string is here to be written. First string is here to be written. First string is here to be written. First string is here to be written. First string is here to be written. First string is here to be written. First string is here to be written. First string is here to be written. First string is here to be written. First string is here to be written. First string is here to be written. First string is here to be written. First string is here to be written. First string is here to be written. First string is here to be written. First string is here to be written. First string is here to be written. First string is here to be written. First string is here to be written. First string is here to be written. First string is here to be written. First string is here to be written. First string is here to be written. First string is here to be written. First string is here to be written. First string is here to be written. First string is here to be written. First string is here to be written. First string is here to be written. First string is here to be written. First string is here to be written. First string is here to be written. First string is here to be written.\n\n\n")
-        }
-        val fileOutputStream = FileOutputStream(file, true)
-        fileOutputStream.write(data.toString().toByteArray())
-
-        return file
+    private fun handleSignInResult(result: Intent) {
+        GoogleSignIn.getSignedInAccountFromIntent(result)
+            .addOnSuccessListener { googleSignInAccount ->
+                Log.d(
+                    TAG,
+                    "Signed in as " + googleSignInAccount.email
+                )
+                gmail!!.text = googleSignInAccount.email
+                driveServiceHelper = DriveServiceHelper(
+                    getGoogleDriveService(
+                        applicationContext,
+                        googleSignInAccount,
+                        "PMU"
+                    )
+                )
+                Log.d(
+                    TAG,
+                    "handleSignInResult: $driveServiceHelper"
+                )
+            }
+            .addOnFailureListener { e ->
+                Log.e(
+                    TAG,
+                    "Unable to sign in.",
+                    e
+                )
+            }
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        if (null != mGoogleApiClient)
-            mGoogleApiClient!!.signOut()
-    }
-
-    private fun getFile() : File {
-        val databaseDirectory = Environment.getDataDirectory()
-        val databaseFileName1 = "//data//com.aco.pmu//databases//PMUs_database"
-        val databaseFile1 = File(databaseDirectory, databaseFileName1)
-        return databaseFile1
+    companion object {
+        private const val REQUEST_CODE_SIGN_IN = 100
+        private const val TAG = "GoogleDrive"
     }
 }

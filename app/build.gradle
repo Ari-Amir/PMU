@@ -78,6 +78,8 @@ dependencies {
     implementation "com.android.support:design:$design_version"
     implementation "com.android.support:cardview-v7:$design_version"
 
+    //loader
+    implementation 'com.github.Nikoloutsos:KLoadingSpin:1.0.0'
 
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
@@ -90,6 +92,9 @@ dependencies {
     implementation "com.google.android.material:material:1.1.0"
     implementation "androidx.legacy:legacy-support-core-ui:1.0.0"
     implementation "androidx.legacy:legacy-support-core-utils:1.0.0"
+    implementation 'com.github.bumptech.glide:glide:4.10.0'
+    implementation 'com.shobhitpuri.custombuttons:google-signin:1.1.0'
+
 
 
     //Kaspresso

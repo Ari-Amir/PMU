@@ -10,7 +10,7 @@
 
     <application
         android:allowBackup="true"
-        android:icon="@drawable/ic_procedure"
+        android:icon="@drawable/ic_app"
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/Theme.Design.NoActionBar"
@@ -22,7 +22,6 @@
         <activity android:name=".procedures.AddProcedureActivity" />
         <activity android:name=".googleDrive.RunTimePermission" />
         <activity android:name=".googleDrive.GoogleDrive" />
-        <activity android:name=".googleDrive1.GoogleDrive1" />
 
         <activity android:name=".MainActivity">
             <intent-filter>

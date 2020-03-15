@@ -1,8 +1,6 @@
-package com.aco.pmu.googleDrive1
+package com.aco.pmu.googleDrive
 
-import com.google.api.client.util.DateTime
-
-class GoogleDriveFileHolder1 {
+class GoogleDriveFileHolder {
     var id: String? = null
     var name: String? = null
     var size: Long = 0
