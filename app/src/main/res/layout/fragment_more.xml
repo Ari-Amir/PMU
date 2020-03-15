@@ -59,6 +59,20 @@
             app:layout_constraintLeft_toLeftOf="parent"
             android:textAppearance="@style/TextAppearance.AppCompat.Large"/>
 
+<!--        <Button-->
+<!--            android:id="@+id/btnIn"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:text="Перенести в базу"-->
+<!--            android:clickable="true"/>-->
+
+<!--        <Button-->
+<!--            android:id="@+id/btnOut"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:text="Вытащить из базы"-->
+<!--            android:clickable="true"/>-->
+
 
     </LinearLayout>
 
