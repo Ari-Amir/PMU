@@ -1,9 +1,7 @@
 package com.aco.pmu.records
 
-import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.AlertDialog
-import android.app.Application
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -112,7 +110,7 @@ class RecordsFragment : Fragment(), CalendarView.CalendarListener {
             }
 
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-                var recordToDelete = adapter.getRecordAt(viewHolder.adapterPosition)
+                val recordToDelete = adapter.getRecordAt(viewHolder.adapterPosition)
 
                 val alertDialog = AlertDialog.Builder(activity)
                 alertDialog.setTitle("Удаление записи")
@@ -159,9 +157,9 @@ class RecordsFragment : Fragment(), CalendarView.CalendarListener {
 
         adapter.setOnItemClickListener(object : RecordsAdapter.OnItemClickListener {
             override fun onItemClick(recordsEntity: RecordsEntity) {
-                var intent = Intent(activity, AddRecordActivity::class.java)
+                val intent = Intent(activity, AddRecordActivity::class.java)
                 intent.putExtra(AddRecordActivity.EXTRA_ID, recordsEntity.id)
-                intent.putExtra(AddRecordActivity.EXTRA_DATE, Converters().dateFromTimestamp(recordsEntity.date))
+                intent.putExtra(AddRecordActivity.EXTRA_DATE, Converters().timestampToDate(recordsEntity.date))
                 intent.putExtra(AddRecordActivity.EXTRA_TIME, recordsEntity.time)
                 intent.putExtra(AddRecordActivity.EXTRA_FIRSTANDLASTNAME, recordsEntity.firstAndlastNames)
                 intent.putExtra(AddRecordActivity.EXTRA_PHONENUMBER1, recordsEntity.phoneNumber1)

@@ -1,21 +1,16 @@
 package com.aco.pmu.records
 
-import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import androidx.appcompat.view.menu.MenuView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.aco.pmu.R
 import com.aco.pmu.appDatabase.Converters
 import com.aco.pmu.appDatabase.RecordsEntity
-import kotlinx.android.synthetic.main.activity_add_record.*
-import kotlinx.android.synthetic.main.item_records.*
 import kotlinx.android.synthetic.main.item_records.view.*
-import org.w3c.dom.Text
 
 class RecordsAdapter : ListAdapter<RecordsEntity, RecordsAdapter.RecordsHolder>(
     DIFF_CALLBACK
@@ -56,7 +51,7 @@ class RecordsAdapter : ListAdapter<RecordsEntity, RecordsAdapter.RecordsHolder>(
                 holder.textViewPhoneNumber.setTextAppearance(R.style.Bold_12_Gray)
                 holder.textViewProcedure.setTextAppearance(R.style.Italic_12_Gray)
 
-                holder.textViewDate.text = Converters().dateFromTimestamp(currentRecordsEntity.date)
+                holder.textViewDate.text = Converters().timestampToDate(currentRecordsEntity.date)
                 holder.textViewTime.text = currentRecordsEntity.time
                 holder.textViewFirstAndLastName.text = currentRecordsEntity.firstAndlastNames
                 holder.textViewPhoneNumber.text = currentRecordsEntity.phoneNumber1.trim(',')
@@ -70,7 +65,7 @@ class RecordsAdapter : ListAdapter<RecordsEntity, RecordsAdapter.RecordsHolder>(
                 holder.textViewPhoneNumber.setTextAppearance(R.style.Bold_12_White)
                 holder.textViewProcedure.setTextAppearance(R.style.Italic_12_White)
 
-                holder.textViewDate.text = Converters().dateFromTimestamp(currentRecordsEntity.date)
+                holder.textViewDate.text = Converters().timestampToDate(currentRecordsEntity.date)
                 holder.textViewTime.text = currentRecordsEntity.time
                 holder.textViewFirstAndLastName.text = currentRecordsEntity.firstAndlastNames
                 holder.textViewPhoneNumber.text = currentRecordsEntity.phoneNumber1.trim(',')

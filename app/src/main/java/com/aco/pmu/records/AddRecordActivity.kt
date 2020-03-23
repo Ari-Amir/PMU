@@ -1,6 +1,7 @@
 package com.aco.pmu.records
 
 import android.app.Activity
+import android.app.AlertDialog
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
 import android.content.Intent
@@ -12,15 +13,23 @@ import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.recyclerview.widget.ItemTouchHelper
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.aco.pmu.R
 import com.aco.pmu.clients.ClientsSelectFragment
 import com.aco.pmu.pigments.PigmentsSelectFragment1
 import com.aco.pmu.pigments.PigmentsSelectFragment2
 import com.aco.pmu.pigments.PigmentsSelectFragment3
 import com.aco.pmu.procedures.ProceduresSelectFragment
+import com.aco.pmu.records.adapters.AdapterForAddRecordsActivity
+import com.nguyenhoanglam.imagepicker.model.Config
+import com.nguyenhoanglam.imagepicker.model.Image
+import com.nguyenhoanglam.imagepicker.ui.imagepicker.ImagePicker
 import kotlinx.android.synthetic.main.activity_add_record.*
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.collections.ArrayList
 
 
 class AddRecordActivity : AppCompatActivity() {
@@ -42,7 +51,13 @@ class AddRecordActivity : AppCompatActivity() {
         const val EXTRA_PRICE = "EXTRA_PRICE"
         const val EXTRA_COMMENTS = "EXTRA_COMMENTS"
         const val EXTRA_STATUS = "EXTRA_STATUS"
+        const val EXTRA_IMAGE_ATTR = "EXTRA_IMAGE_ATTR"
     }
+
+    private var pickImageButton: Button? = null
+    var adapter: AdapterForAddRecordsActivity? = null
+    var images = ArrayList<Image>()
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -70,9 +85,19 @@ class AddRecordActivity : AppCompatActivity() {
         findViewById<View>(R.id.pigmentsSelectTextView3).setOnClickListener {
             clickPigments3()
         }
+        findViewById<Button>(R.id.buttonPickImage).setOnClickListener { selectImage() }
 
 
-        val pigmentsCount1 = (0..15).map{it.toString()}
+        ic_menu_done_record.setOnClickListener {
+            saveRecord()
+        }
+
+        ic_menu_close_record.setOnClickListener {
+            finish()
+        }
+
+
+        val pigmentsCount1 = (0..15).map { it.toString() }
         val spinner1 = findViewById<Spinner>(R.id.spinner1)
         if (spinner1 != null) {
             val arrayAdapter = ArrayAdapter(this, R.layout.spinner, pigmentsCount1)
@@ -93,7 +118,7 @@ class AddRecordActivity : AppCompatActivity() {
             }
         }
 
-        val pigmentsCount2 = (0..15).map{it.toString()}
+        val pigmentsCount2 = (0..15).map { it.toString() }
         val spinner2 = findViewById<Spinner>(R.id.spinner2)
         if (spinner2 != null) {
             val arrayAdapter = ArrayAdapter(this, R.layout.spinner, pigmentsCount2)
@@ -114,7 +139,7 @@ class AddRecordActivity : AppCompatActivity() {
             }
         }
 
-        val pigmentsCount3 = (0..15).map{it.toString()}
+        val pigmentsCount3 = (0..15).map { it.toString() }
         val spinner3 = findViewById<Spinner>(R.id.spinner3)
         if (spinner3 != null) {
             val arrayAdapter = ArrayAdapter(this, R.layout.spinner, pigmentsCount3)
@@ -218,9 +243,9 @@ class AddRecordActivity : AppCompatActivity() {
             pigmentsSelectTextView1.text = (intent.getStringExtra(EXTRA_PIGMENT1))
             pigmentsSelectTextView2.text = (intent.getStringExtra(EXTRA_PIGMENT2))
             pigmentsSelectTextView3.text = (intent.getStringExtra(EXTRA_PIGMENT3))
-            spinner1.setSelection(intent.getIntExtra(EXTRA_PIGMENTQUANTITY1,-1))
-            spinner2.setSelection(intent.getIntExtra(EXTRA_PIGMENTQUANTITY2,-1))
-            spinner3.setSelection(intent.getIntExtra(EXTRA_PIGMENTQUANTITY3,-1))
+            spinner1.setSelection(intent.getIntExtra(EXTRA_PIGMENTQUANTITY1, -1))
+            spinner2.setSelection(intent.getIntExtra(EXTRA_PIGMENTQUANTITY2, -1))
+            spinner3.setSelection(intent.getIntExtra(EXTRA_PIGMENTQUANTITY3, -1))
             priceEditText.setText(intent.getStringExtra(EXTRA_PRICE))
             commentsEditText.setText(intent.getStringExtra(EXTRA_COMMENTS))
             doneSwitch.isChecked = intent.getBooleanExtra(EXTRA_STATUS, false)
@@ -229,14 +254,95 @@ class AddRecordActivity : AppCompatActivity() {
             toolbarLabel.text = "Новая запись"
         }
 
-        ic_menu_done_record.setOnClickListener {
-            saveRecord()
-        }
 
-        ic_menu_close_record.setOnClickListener {
-            finish()
+        pickImageButton?.setOnClickListener { selectImage() }
+        adapter = AdapterForAddRecordsActivity(this)
+        val layoutManager: RecyclerView.LayoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
+        imagesRecyclerView.layoutManager = layoutManager
+        imagesRecyclerView.adapter = adapter
+        imagesRecyclerView.isNestedScrollingEnabled = false
+
+
+        ItemTouchHelper(object :
+            ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.UP.or(ItemTouchHelper.DOWN)) {
+            override fun onMove(
+                recyclerView: RecyclerView,
+                viewHolder: RecyclerView.ViewHolder,
+                target: RecyclerView.ViewHolder
+            ): Boolean {
+                return false
+            }
+
+            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+                val imageToDelete = adapter!!.getImageAt(viewHolder.adapterPosition)
+
+                val alertDialog = AlertDialog.Builder(this@AddRecordActivity)
+                alertDialog.setTitle("Удаление фото")
+                alertDialog.setMessage("Вы действительно хотите удалить фото?")
+
+                alertDialog.setPositiveButton("Да") { dialog, which ->
+                    adapter!!.removeImage(imageToDelete)
+                    images.remove(imageToDelete)
+                    Toast.makeText(
+                        this@AddRecordActivity,
+                        "Фото удалено",
+                        Toast.LENGTH_SHORT
+                    ).show()
+
+                    adapter!!.notifyDataSetChanged()
+                }
+
+                alertDialog.setNegativeButton("Нет") { _, _ ->
+                    adapter!!.notifyItemChanged(
+                        viewHolder.adapterPosition
+                    )
+                }
+
+                alertDialog.setOnCancelListener {
+                    onDismissAlertDialog(viewHolder)
+                }
+
+                alertDialog.show()
+            }
+
+            fun onDismissAlertDialog (viewHolder: RecyclerView.ViewHolder) {
+                adapter!!.notifyItemChanged(
+                    viewHolder.adapterPosition
+                )
+            }
         }
+        ).attachToRecyclerView(imagesRecyclerView)
+
+
+        adapter?.setOnItemClickListener(object : AdapterForAddRecordsActivity.OnItemClickListener {
+            override fun onItemClick(images: ArrayList<Image>) {
+
+                val listOfImagesAttr = ArrayList<String>()
+
+                for (i in images) {
+                    val id = i.id.toString()
+                    val name = i.name
+                    val path = i.path
+
+                    val subList = mutableListOf<String>()
+                    subList.add(id)
+                    subList.add(name)
+                    subList.add(path)
+
+                    listOfImagesAttr.add(subList.toString())
+                }
+
+                val bundle = Bundle()
+                bundle.putStringArrayList(EXTRA_IMAGE_ATTR, listOfImagesAttr)
+                val fragment = BottomDialogFragment()
+                fragment.arguments = bundle
+
+                supportFragmentManager
+                    .beginTransaction().add(fragment, "").addToBackStack("").commit()
+            }
+        })
     }
+
 
     private fun saveRecord() {
 
@@ -256,72 +362,72 @@ class AddRecordActivity : AppCompatActivity() {
             return
         }
 
-                val dateString = dateSelectTextView.text.toString()
+        val dateString = dateSelectTextView.text.toString()
 
         //val sdf = SimpleDateFormat("dd MMMM yyyy", Locale.ENGLISH)
 
-                fun replaceMonth(): String {
+        fun replaceMonth(): String {
 
-                    when {
-                        dateSelectTextView.text.contains("января") -> return dateSelectTextView.text.toString()
-                            .replace("января", "january")
-                        dateSelectTextView.text.contains("февраля") -> return dateSelectTextView.text.toString()
-                            .replace("февраля", "february")
-                        dateSelectTextView.text.contains("марта") -> return dateSelectTextView.text.toString()
-                            .replace("марта", "march")
-                        dateSelectTextView.text.contains("апреля") -> return dateSelectTextView.text.toString()
-                            .replace("апреля", "april")
-                        dateSelectTextView.text.contains("мая") -> return dateSelectTextView.text.toString()
-                            .replace("мая", "may")
-                        dateSelectTextView.text.contains("июня") -> return dateSelectTextView.text.toString()
-                            .replace("июня", "june")
-                        dateSelectTextView.text.contains("июля") -> return dateSelectTextView.text.toString()
-                            .replace("июля", "july")
-                        dateSelectTextView.text.contains("августа") -> return dateSelectTextView.text.toString()
-                            .replace("августа", "august")
-                        dateSelectTextView.text.contains("сентября") -> return dateSelectTextView.text.toString()
-                            .replace("сентября", "september")
-                        dateSelectTextView.text.contains("октября") -> return dateSelectTextView.text.toString()
-                            .replace("октября", "october")
-                        dateSelectTextView.text.contains("ноября") -> return dateSelectTextView.text.toString()
-                            .replace("ноября", "november")
-                        dateSelectTextView.text.contains("декабря") -> return dateSelectTextView.text.toString()
-                            .replace("декабря", "december")
-                    }
-                    return dateString
-                }
-
-                val parsedDate = Date.parse(replaceMonth())
-
-                val data = Intent().apply {
-                    putExtra(EXTRA_DATE, parsedDate)
-                    putExtra(EXTRA_TIME, timeSelectTextView.text.toString())
-                    putExtra(EXTRA_FIRSTANDLASTNAME, nameSurnameSelectTextView.text.toString())
-                    putExtra(EXTRA_PHONENUMBER1, phoneNumberSelectTextView1.text.toString())
-                    putExtra(EXTRA_PHONENUMBER2, phoneNumberSelectTextView2.text.toString())
-                    putExtra(EXTRA_PROCEDURES, procedureSelectTextView.text.toString())
-                    putExtra(EXTRA_PIGMENT1, pigmentsSelectTextView1.text.toString())
-                    putExtra(EXTRA_PIGMENT2, pigmentsSelectTextView2.text.toString())
-                    putExtra(EXTRA_PIGMENT3, pigmentsSelectTextView3.text.toString())
-                    putExtra(EXTRA_PIGMENTQUANTITY1, spinner1.selectedItemPosition)
-                    putExtra(EXTRA_PIGMENTQUANTITY2, spinner2.selectedItemPosition)
-                    putExtra(EXTRA_PIGMENTQUANTITY3, spinner3.selectedItemPosition)
-                    putExtra(EXTRA_PRICE, priceEditText.text.toString())
-                    putExtra(EXTRA_COMMENTS, commentsEditText.text.toString())
-                    putExtra(EXTRA_STATUS, doneSwitch.isChecked)
-
-                    if (intent.getIntExtra(EXTRA_ID, -1) != -1) {
-                        putExtra(
-                            EXTRA_ID, intent.getIntExtra(
-                                EXTRA_ID, -1
-                            )
-                        )
-                    }
-                }
-
-                setResult(Activity.RESULT_OK, data)
-                finish()
+            when {
+                dateSelectTextView.text.contains("января") -> return dateSelectTextView.text.toString()
+                    .replace("января", "january")
+                dateSelectTextView.text.contains("февраля") -> return dateSelectTextView.text.toString()
+                    .replace("февраля", "february")
+                dateSelectTextView.text.contains("марта") -> return dateSelectTextView.text.toString()
+                    .replace("марта", "march")
+                dateSelectTextView.text.contains("апреля") -> return dateSelectTextView.text.toString()
+                    .replace("апреля", "april")
+                dateSelectTextView.text.contains("мая") -> return dateSelectTextView.text.toString()
+                    .replace("мая", "may")
+                dateSelectTextView.text.contains("июня") -> return dateSelectTextView.text.toString()
+                    .replace("июня", "june")
+                dateSelectTextView.text.contains("июля") -> return dateSelectTextView.text.toString()
+                    .replace("июля", "july")
+                dateSelectTextView.text.contains("августа") -> return dateSelectTextView.text.toString()
+                    .replace("августа", "august")
+                dateSelectTextView.text.contains("сентября") -> return dateSelectTextView.text.toString()
+                    .replace("сентября", "september")
+                dateSelectTextView.text.contains("октября") -> return dateSelectTextView.text.toString()
+                    .replace("октября", "october")
+                dateSelectTextView.text.contains("ноября") -> return dateSelectTextView.text.toString()
+                    .replace("ноября", "november")
+                dateSelectTextView.text.contains("декабря") -> return dateSelectTextView.text.toString()
+                    .replace("декабря", "december")
             }
+            return dateString
+        }
+
+        val parsedDate = Date.parse(replaceMonth())
+
+        val data = Intent().apply {
+            putExtra(EXTRA_DATE, parsedDate)
+            putExtra(EXTRA_TIME, timeSelectTextView.text.toString())
+            putExtra(EXTRA_FIRSTANDLASTNAME, nameSurnameSelectTextView.text.toString())
+            putExtra(EXTRA_PHONENUMBER1, phoneNumberSelectTextView1.text.toString())
+            putExtra(EXTRA_PHONENUMBER2, phoneNumberSelectTextView2.text.toString())
+            putExtra(EXTRA_PROCEDURES, procedureSelectTextView.text.toString())
+            putExtra(EXTRA_PIGMENT1, pigmentsSelectTextView1.text.toString())
+            putExtra(EXTRA_PIGMENT2, pigmentsSelectTextView2.text.toString())
+            putExtra(EXTRA_PIGMENT3, pigmentsSelectTextView3.text.toString())
+            putExtra(EXTRA_PIGMENTQUANTITY1, spinner1.selectedItemPosition)
+            putExtra(EXTRA_PIGMENTQUANTITY2, spinner2.selectedItemPosition)
+            putExtra(EXTRA_PIGMENTQUANTITY3, spinner3.selectedItemPosition)
+            putExtra(EXTRA_PRICE, priceEditText.text.toString())
+            putExtra(EXTRA_COMMENTS, commentsEditText.text.toString())
+            putExtra(EXTRA_STATUS, doneSwitch.isChecked)
+
+            if (intent.getIntExtra(EXTRA_ID, -1) != -1) {
+                putExtra(
+                    EXTRA_ID, intent.getIntExtra(
+                        EXTRA_ID, -1
+                    )
+                )
+            }
+        }
+
+        setResult(Activity.RESULT_OK, data)
+        finish()
+    }
 
 
     fun clickDatePicker() {
@@ -392,7 +498,8 @@ class AddRecordActivity : AppCompatActivity() {
         phoneNumberSelectTextView1.text = intent.getStringExtra(EXTRA_PHONENUMBER1)
         phoneNumberSelectTextView2.text = intent.getStringExtra(EXTRA_PHONENUMBER2)
         if (intent.hasExtra(EXTRA_PHONENUMBER2)) {
-            val params = phoneNumberSelectSelectDivider2.layoutParams as ConstraintLayout.LayoutParams
+            val params =
+                phoneNumberSelectSelectDivider2.layoutParams as ConstraintLayout.LayoutParams
             additionalPhoneNumber.visibility = View.VISIBLE
             params.topToBottom = R.id.additionalPhoneNumber
             mainDivider2.visibility = View.VISIBLE
@@ -400,7 +507,8 @@ class AddRecordActivity : AppCompatActivity() {
             phoneNumberSelectTextView2.visibility = View.VISIBLE
             phoneNumberSelectSelectDivider1.visibility = View.VISIBLE
         } else {
-            val params = phoneNumberSelectSelectDivider2.layoutParams as ConstraintLayout.LayoutParams
+            val params =
+                phoneNumberSelectSelectDivider2.layoutParams as ConstraintLayout.LayoutParams
             additionalPhoneNumber.visibility = View.INVISIBLE
             params.topToBottom = R.id.phoneNumberSelectSelectDivider1
             mainDivider2.visibility = View.INVISIBLE
@@ -432,15 +540,102 @@ class AddRecordActivity : AppCompatActivity() {
     }
 
     fun showAdditionalPhoneNumber() {
-            if (intent.getStringExtra(EXTRA_PHONENUMBER2).length > 1) {
-                val params = phoneNumberSelectSelectDivider2.layoutParams as ConstraintLayout.LayoutParams
-                additionalPhoneNumber.visibility = View.VISIBLE
-                params.topToBottom = R.id.additionalPhoneNumber
-                mainDivider2.visibility = View.VISIBLE
-                ic_telephone2.visibility = View.VISIBLE
-                phoneNumberSelectTextView2.visibility = View.VISIBLE
-                phoneNumberSelectSelectDivider1.visibility = View.VISIBLE
+        if (intent.getStringExtra(EXTRA_PHONENUMBER2).length > 1) {
+            val params =
+                phoneNumberSelectSelectDivider2.layoutParams as ConstraintLayout.LayoutParams
+            additionalPhoneNumber.visibility = View.VISIBLE
+            params.topToBottom = R.id.additionalPhoneNumber
+            mainDivider2.visibility = View.VISIBLE
+            ic_telephone2.visibility = View.VISIBLE
+            phoneNumberSelectTextView2.visibility = View.VISIBLE
+            phoneNumberSelectSelectDivider1.visibility = View.VISIBLE
 
-            }
+        }
     }
+
+    fun selectImage() {
+        ImagePicker.with(this)
+            .setFolderMode(false)
+            .setShowCamera(true)
+            .setSavePath("//PMU camera")
+            .setStatusBarColor("#000000")
+            .setToolbarColor("#000000")
+            .setToolbarIconColor("#97bf0d")
+            .setToolbarTextColor("#97bf0d")
+            .setDoneTitle("OK")
+            .setImageTitle("Галерея")
+            .setLimitMessage("Максимум 6 фото")
+            .setMultipleMode(true)
+            .setSelectedImages(images)
+            .setMaxSize(6)
+            .setBackgroundColor("#212121")
+            .setAlwaysShowDoneButton(true)
+            .setRequestCode(100)
+            .setKeepScreenOn(true)
+            .start()
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if (requestCode == Config.RC_PICK_IMAGES && resultCode == Activity.RESULT_OK && data != null) {
+            images = data.getParcelableArrayListExtra(Config.EXTRA_IMAGES)
+            adapter!!.setData(images)
+
+            super.onActivityResult(requestCode, resultCode, data)
+
+        }
+    }
+
+//    override fun onStop() {
+//        super.onStop()
+//
+//        val tempImageFolder = File(
+//            Environment.getExternalStorageDirectory().toString() + "/tempImages"
+//        )
+//        if (tempImageFolder.isDirectory) {
+//            val children = tempImageFolder.list()
+//            for (i in children.indices) {
+//                File(tempImageFolder, children[i]).delete()
+//            }
+//            tempImageFolder.delete()
+//        }
+//    }
 }
+
+//                    val bitmap = BitmapFactory.decodeFile(i.path)
+//                    val root: String = Environment.getExternalStorageDirectory().toString()
+//                    val folder = File("$root/tempImages")
+//                    folder.mkdirs()
+//
+//                    val uuid = String.format("%04d", Random().nextInt(10000)).toLong()
+//
+//
+//                   // val uuid = UUID.randomUUID().leastSignificantBits and Long.MIN_VALUE
+//
+//                    val timeStamp = SimpleDateFormat("ddMMyyyy_HHmmss_SSS").format(Date())
+//                    val fileName = "PMU_$timeStamp.jpg"
+//                    val file = File(folder, fileName)
+//
+//
+//                    // Compress the bitmap and save in jpg format
+//                    if (file.exists()) file.delete ()
+//                    try {
+//                        val stream = FileOutputStream(file)
+//                        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream)
+//                        stream.flush()
+//                        stream.close()
+//                    } catch (e: Exception) {
+//                        e.printStackTrace()
+//                    }
+//
+//                    val image = Image(uuid, file.name, file.path)
+
+
+//                for (i in images) {
+//                    val bm: Bitmap = BitmapFactory.decodeFile(i.path) //Convert the image into bitmap.
+//                    val baos = ByteArrayOutputStream()
+//                    bm.compress(Bitmap.CompressFormat.JPEG, 100, baos) //Compress bitmap to ByteArrayOutputStream.
+//                    val imageBytes = baos.toByteArray() //Convert ByteArrayOutputStream to byte array.
+//                    val value: String = Base64.getEncoder().encodeToString(imageBytes) //Convert byte array to base64 string.
+//
+//                    list.add(value)
+//                }
