@@ -34,6 +34,10 @@ class AdapterForBottomDialogFragment(private val context: Context) : RecyclerVie
         return images.size
     }
 
+    fun getChildAtPosition(position: Int): Image {
+        return images[position]
+    }
+
     fun setData(images: List<Image>?) {
         this.images.clear()
         if (images != null) {

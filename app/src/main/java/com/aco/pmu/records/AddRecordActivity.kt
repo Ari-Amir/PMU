@@ -4,16 +4,18 @@ import android.app.Activity
 import android.app.AlertDialog
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
+import android.content.Context
 import android.content.Intent
 import android.icu.util.Calendar
 import android.os.Bundle
+import android.os.VibrationEffect
+import android.os.Vibrator
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.aco.pmu.R
@@ -23,8 +25,12 @@ import com.aco.pmu.pigments.PigmentsSelectFragment2
 import com.aco.pmu.pigments.PigmentsSelectFragment3
 import com.aco.pmu.procedures.ProceduresSelectFragment
 import com.aco.pmu.records.adapters.AdapterForAddRecordsActivity
+import com.aco.pmu.records.adapters.AdapterForBottomDialogFragment
+import com.nguyenhoanglam.imagepicker.adapter.ImagePickerAdapter
+import com.nguyenhoanglam.imagepicker.listener.OnImageClickListener
 import com.nguyenhoanglam.imagepicker.model.Config
 import com.nguyenhoanglam.imagepicker.model.Image
+import com.nguyenhoanglam.imagepicker.ui.imagepicker.ImageLoader
 import com.nguyenhoanglam.imagepicker.ui.imagepicker.ImagePicker
 import kotlinx.android.synthetic.main.activity_add_record.*
 import java.text.SimpleDateFormat
@@ -52,10 +58,12 @@ class AddRecordActivity : AppCompatActivity() {
         const val EXTRA_COMMENTS = "EXTRA_COMMENTS"
         const val EXTRA_STATUS = "EXTRA_STATUS"
         const val EXTRA_IMAGE_ATTR = "EXTRA_IMAGE_ATTR"
+        const val EXTRA_IMAGE_POSITION = "EXTRA_IMAGE_POSITION"
     }
 
     private var pickImageButton: Button? = null
     var adapter: AdapterForAddRecordsActivity? = null
+    var adapter2: AdapterForBottomDialogFragment? = null
     var images = ArrayList<Image>()
 
 
@@ -260,63 +268,11 @@ class AddRecordActivity : AppCompatActivity() {
         val layoutManager: RecyclerView.LayoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
         imagesRecyclerView.layoutManager = layoutManager
         imagesRecyclerView.adapter = adapter
-        imagesRecyclerView.isNestedScrollingEnabled = false
-
-
-        ItemTouchHelper(object :
-            ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.UP.or(ItemTouchHelper.DOWN)) {
-            override fun onMove(
-                recyclerView: RecyclerView,
-                viewHolder: RecyclerView.ViewHolder,
-                target: RecyclerView.ViewHolder
-            ): Boolean {
-                return false
-            }
-
-            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-                val imageToDelete = adapter!!.getImageAt(viewHolder.adapterPosition)
-
-                val alertDialog = AlertDialog.Builder(this@AddRecordActivity)
-                alertDialog.setTitle("Удаление фото")
-                alertDialog.setMessage("Вы действительно хотите удалить фото?")
-
-                alertDialog.setPositiveButton("Да") { dialog, which ->
-                    adapter!!.removeImage(imageToDelete)
-                    images.remove(imageToDelete)
-                    Toast.makeText(
-                        this@AddRecordActivity,
-                        "Фото удалено",
-                        Toast.LENGTH_SHORT
-                    ).show()
-
-                    adapter!!.notifyDataSetChanged()
-                }
-
-                alertDialog.setNegativeButton("Нет") { _, _ ->
-                    adapter!!.notifyItemChanged(
-                        viewHolder.adapterPosition
-                    )
-                }
-
-                alertDialog.setOnCancelListener {
-                    onDismissAlertDialog(viewHolder)
-                }
-
-                alertDialog.show()
-            }
-
-            fun onDismissAlertDialog (viewHolder: RecyclerView.ViewHolder) {
-                adapter!!.notifyItemChanged(
-                    viewHolder.adapterPosition
-                )
-            }
-        }
-        ).attachToRecyclerView(imagesRecyclerView)
 
 
         adapter?.setOnItemClickListener(object : AdapterForAddRecordsActivity.OnItemClickListener {
-            override fun onItemClick(images: ArrayList<Image>) {
-
+            override fun onItemClick(images: ArrayList<Image>, viewHolder: RecyclerView.ViewHolder) {
+                val imagePosition = adapter!!.getImagePosition(viewHolder.adapterPosition)
                 val listOfImagesAttr = ArrayList<String>()
 
                 for (i in images) {
@@ -334,12 +290,49 @@ class AddRecordActivity : AppCompatActivity() {
 
                 val bundle = Bundle()
                 bundle.putStringArrayList(EXTRA_IMAGE_ATTR, listOfImagesAttr)
+                bundle.putInt(EXTRA_IMAGE_POSITION, imagePosition)
                 val fragment = BottomDialogFragment()
                 fragment.arguments = bundle
 
                 supportFragmentManager
                     .beginTransaction().add(fragment, "").addToBackStack("").commit()
             }
+        })
+
+
+        adapter?.setOnItemLongClickListener(object : AdapterForAddRecordsActivity.OnItemLongClickListener {
+
+            override fun onItemLongClick(viewHolder: RecyclerView.ViewHolder) {
+                vibrate()
+                val imageToDelete = adapter!!.getImageAt(viewHolder.adapterPosition)
+
+                val alertDialog = AlertDialog.Builder(this@AddRecordActivity)
+                alertDialog.setMessage("Убрать данное фото?")
+
+                alertDialog.setPositiveButton("Да") { dialog, which ->
+                    adapter!!.removeImage(imageToDelete)
+                    images.remove(imageToDelete)
+                    adapter!!.notifyDataSetChanged()
+                }
+
+                alertDialog.setNegativeButton("Нет") { _, _ ->
+                    adapter!!.notifyItemChanged(
+                        viewHolder.adapterPosition
+                    )
+                }
+
+                alertDialog.setOnCancelListener {
+                    onDismissAlertDialog(viewHolder)
+                }
+                alertDialog.show()
+
+            }
+
+                fun onDismissAlertDialog (viewHolder: RecyclerView.ViewHolder) {
+                    adapter!!.notifyItemChanged(
+                        viewHolder.adapterPosition
+                    )
+                }
         })
     }
 
@@ -583,6 +576,11 @@ class AddRecordActivity : AppCompatActivity() {
             super.onActivityResult(requestCode, resultCode, data)
 
         }
+    }
+
+    fun vibrate() {
+        val vibrator = getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
+        vibrator.vibrate(VibrationEffect.createOneShot(35, VibrationEffect.DEFAULT_AMPLITUDE))
     }
 
 //    override fun onStop() {

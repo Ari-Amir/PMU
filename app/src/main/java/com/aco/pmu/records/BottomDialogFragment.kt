@@ -8,13 +8,16 @@ import android.view.ViewGroup
 import android.view.ViewTreeObserver.OnGlobalLayoutListener
 import android.widget.FrameLayout
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.PagerSnapHelper
 import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.SnapHelper
 import com.aco.pmu.R
 import com.aco.pmu.records.adapters.AdapterForBottomDialogFragment
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.nguyenhoanglam.imagepicker.model.Image
+import kotlinx.android.synthetic.main.activity_add_record.*
 import kotlinx.android.synthetic.main.fragment_bottom_dialog.*
 
 
@@ -48,6 +51,7 @@ class BottomDialogFragment : BottomSheetDialogFragment() {
 
 
         val list = arguments?.getStringArrayList(AddRecordActivity.EXTRA_IMAGE_ATTR)
+        val imagePosition = arguments!!.getInt(AddRecordActivity.EXTRA_IMAGE_POSITION)
 
         val listOfImages = mutableListOf<Image>()
 
@@ -66,6 +70,9 @@ class BottomDialogFragment : BottomSheetDialogFragment() {
         val layoutManager: RecyclerView.LayoutManager = LinearLayoutManager(activity, LinearLayoutManager.HORIZONTAL, false)
         this.bottomDialogRecyclerView.layoutManager = layoutManager
         this.bottomDialogRecyclerView.adapter = adapter
+        val pagerSnapHelper = PagerSnapHelper()
+        pagerSnapHelper.attachToRecyclerView(bottomDialogRecyclerView)
+        this.bottomDialogRecyclerView.scrollToPosition(imagePosition)
     }
 }
 
