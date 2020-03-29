@@ -23,7 +23,6 @@ class Converters {
         return format.format(date)
     }
 
-    @SuppressLint("SimpleDateFormat")
     @TypeConverter
     fun stringToImage(imagesInString: ArrayList<String>?): MutableList<Image> {
         val imagesAsFiles = mutableListOf<Image>()
@@ -39,7 +38,7 @@ class Converters {
 
                 val uuid = UUID.randomUUID().mostSignificantBits and Long.MAX_VALUE
 
-                val timeStamp = SimpleDateFormat("ddMMyyyy_HHmmss_SSS").format(Date())
+                val timeStamp = SimpleDateFormat("ddMMyyyy_HHmmss_SSS", Locale.getDefault()).format(Date())
                 val fileName = "PMU_$timeStamp.jpg"
                 val file = File(folder, fileName)
 
