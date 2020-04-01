@@ -1,5 +1,6 @@
 package com.aco.pmu.appDatabase
 
+import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import androidx.room.TypeConverters
@@ -77,9 +78,34 @@ data class RecordsEntity(
 
     var comments: String,
 
-    var status: Boolean
+    var status: Boolean,
+
+    var photoLength: String? = null,
+
+    @ColumnInfo(typeAffinity = ColumnInfo.BLOB)
+    var photos: ByteArray? = null
+
 )
 {
     @PrimaryKey(autoGenerate = true)
     var id: Int = 0
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as RecordsEntity
+
+        if (photos != null) {
+            if (other.photos == null) return false
+            if (!photos!!.contentEquals(other.photos!!)) return false
+        } else if (other.photos != null) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        return photos?.contentHashCode() ?: 0
+    }
+
+
 }

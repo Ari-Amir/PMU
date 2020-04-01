@@ -107,7 +107,6 @@ class DriveServiceHelper(private val mDriveService: Drive) {
                 } else {
                     folderId = folderList.files[0].id           //if exist, get folders Id
                 }
-
             }
         )
     }

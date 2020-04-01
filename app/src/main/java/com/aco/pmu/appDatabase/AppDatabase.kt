@@ -7,7 +7,7 @@ import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 
 
-@Database(entities = [ClientsEntity::class, ProceduresEntity::class, PigmentsEntity::class, RecordsEntity::class], version = 7, exportSchema = true)
+@Database(entities = [ClientsEntity::class, ProceduresEntity::class, PigmentsEntity::class, RecordsEntity::class], version = 8, exportSchema = true)
 @TypeConverters(Converters::class)
 abstract class AppDatabase : RoomDatabase() {
 
@@ -22,7 +22,7 @@ abstract class AppDatabase : RoomDatabase() {
                         context.applicationContext,
                         AppDatabase::class.java, "PMUs_database"
                     )
-                        .addMigrations(Migration.MIGRATION_6_7)
+                        .addMigrations(Migration.MIGRATION_7_8)
                         .allowMainThreadQueries()
                         .build().also { instance = it }
                 }

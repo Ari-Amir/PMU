@@ -10,6 +10,7 @@ apply plugin: 'kotlin-kapt'
 android {
     compileSdkVersion 28
     buildToolsVersion "29.0.3"
+
     defaultConfig {
         applicationId "com.aco.pmu"
         minSdkVersion 26
@@ -58,6 +59,7 @@ dependencies {
     implementation "androidx.lifecycle:lifecycle-extensions:$lifecycle_version"
 
     //ROOM
+    //noinspection GradleDependency
     implementation "androidx.room:room-runtime:$room_version"
     implementation 'android.arch.persistence.room:rxjava2:1.1.1'
     implementation 'android.arch.persistence.room:runtime:1.1.1'

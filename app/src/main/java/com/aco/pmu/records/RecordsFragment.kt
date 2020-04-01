@@ -20,6 +20,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.aco.pmu.R
 import com.aco.pmu.appDatabase.Converters
 import com.aco.pmu.appDatabase.RecordsEntity
+import com.nguyenhoanglam.imagepicker.model.Image
 import kotlinx.android.synthetic.main.fragment_records.*
 import kotlinx.android.synthetic.main.fragment_records.toolbar
 import java.text.SimpleDateFormat
@@ -186,6 +187,25 @@ class RecordsFragment : Fragment(), CalendarView.CalendarListener {
         super.onActivityResult(requestCode, resultCode, data)
 
         if (requestCode == ADD_RECORD_REQUEST && resultCode == Activity.RESULT_OK) {
+//
+//            var list = data?.getStringArrayListExtra(AddRecordActivity.EXTRA_IMAGE_ATTR)
+//            val listOfImages = mutableListOf<Image>()
+//
+//            for (i in list!!) {
+//                val splitted = i?.split(',','[',']')
+//                val id = splitted?.get(1)?.toLong()
+//                val name = splitted?.get(2)?.substring(1)
+//                val path = splitted?.get(3)?.substring(1)
+//
+//                val image = id?.let { Image(it, name, path) }
+//                if (image != null) {
+//                    listOfImages.add(image)
+//                }
+//            }
+//
+//            val photosToDatabase =  Helper().compressImagesToBitmap(listOfImages)
+
+
             val newRecord = RecordsEntity(
                 data!!.getLongExtra(AddRecordActivity.EXTRA_DATE, -1),
                 data.getStringExtra(AddRecordActivity.EXTRA_TIME),
@@ -202,8 +222,8 @@ class RecordsFragment : Fragment(), CalendarView.CalendarListener {
                 data.getStringExtra(AddRecordActivity.EXTRA_PRICE),
                 data.getStringExtra(AddRecordActivity.EXTRA_COMMENTS),
                 data.getBooleanExtra(AddRecordActivity.EXTRA_STATUS, false)
-
             )
+
             recordsViewModel.insert(newRecord)
 
             recordsViewModel.getRecordsASelectedtDate(newRecord.date!!.toLong(), newRecord.date!!.toLong())
@@ -248,7 +268,9 @@ class RecordsFragment : Fragment(), CalendarView.CalendarListener {
                 data.getStringExtra(AddRecordActivity.EXTRA_PRICE),
                 data.getStringExtra(AddRecordActivity.EXTRA_COMMENTS),
                 data.getBooleanExtra(AddRecordActivity.EXTRA_STATUS, false)
+               // data.getStringExtra(AddRecordActivity.EXTRA_PHOTOS)
             )
+
             updateRecord.id = data.getIntExtra(AddRecordActivity.EXTRA_ID, -1)
             recordsViewModel.update(updateRecord)
 

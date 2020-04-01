@@ -3,25 +3,24 @@ package com.aco.pmu.more
 
 import android.content.Intent
 import android.os.Bundle
-import android.os.Environment
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.aco.pmu.R
 import com.aco.pmu.googleDrive.GoogleDrive
 import com.aco.pmu.pigments.PigmentsFragment
 import com.aco.pmu.procedures.ProceduresFragment
+import com.aco.pmu.records.Helper
 import kotlinx.android.synthetic.main.fragment_more.*
-import java.io.File
-import java.io.FileInputStream
-import java.io.FileOutputStream
 
 
 class MoreFragment : Fragment() {
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? =
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? =
         inflater.inflate(R.layout.fragment_more, container, false)
 
 
@@ -49,6 +48,13 @@ class MoreFragment : Fragment() {
         backupAndRestoreButton.setOnClickListener {
             startActivity(Intent(context, GoogleDrive::class.java))
         }
+
+
+        bbb.setOnClickListener {
+        }
+    }
+}
+
 
 //        btnIn.setOnClickListener {
 //            restore()
@@ -146,5 +152,4 @@ class MoreFragment : Fragment() {
 //        } catch (e: Exception) {
 //            Log.e("Error", e.message)
 //        }
-    }
-}
+

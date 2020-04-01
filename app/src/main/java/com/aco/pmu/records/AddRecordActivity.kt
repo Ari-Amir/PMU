@@ -36,6 +36,7 @@ import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileOutputStream
+import java.lang.StringBuilder
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
@@ -63,11 +64,13 @@ class AddRecordActivity : AppCompatActivity() {
         const val EXTRA_STATUS = "EXTRA_STATUS"
         const val EXTRA_IMAGE_ATTR = "EXTRA_IMAGE_ATTR"
         const val EXTRA_IMAGE_POSITION = "EXTRA_IMAGE_POSITION"
+        const val EXTRA_PHOTO_PATH = "EXTRA_PHOTO_PATH"
     }
 
     private var pickImageButton: Button? = null
     var adapter: AdapterForAddRecordsActivity? = null
     var images = ArrayList<Image>()
+
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -242,6 +245,7 @@ class AddRecordActivity : AppCompatActivity() {
         }
 
 
+
         if (intent.hasExtra(EXTRA_ID)) {
             showAdditionalPhoneNumber()
             toolbarLabel.text = "Редактировать запись"
@@ -394,6 +398,8 @@ class AddRecordActivity : AppCompatActivity() {
         }
 
         val parsedDate = Date.parse(replaceMonth())
+
+        Helper().getImagesPaths(images)
 
         val data = Intent().apply {
             putExtra(EXTRA_DATE, parsedDate)
@@ -577,68 +583,7 @@ class AddRecordActivity : AppCompatActivity() {
             images = data.getParcelableArrayListExtra(Config.EXTRA_IMAGES)
             adapter!!.setData(images)
 
-            val root: String = Environment.getExternalStorageDirectory().toString()
-                    val folder = File("$root/tempImages")
-                    folder.mkdirs()
-            val imageInBase64List = mutableListOf<String>()
-
-            for (i in images) {
-                val bitmap: Bitmap = BitmapFactory.decodeFile(i.path) //Convert the image into bitmap.
-
-                val imageFile: File = File(i.path)
-                val fileSize = (imageFile.length().toDouble() / 1048576 * 100.0).roundToInt() / 100.0
-
-                val compressedBitmap: Bitmap
-
-                compressedBitmap = when {
-                    fileSize >= 14.0 -> Bitmap.createScaledBitmap(bitmap, bitmap.width/5, bitmap.height/5, true)
-                    fileSize >= 12.0 -> Bitmap.createScaledBitmap(bitmap, (bitmap.width/4.5).toInt(), (bitmap.height/4.5).toInt(), true)
-                    fileSize >= 10.0 -> Bitmap.createScaledBitmap(bitmap, bitmap.width/4, bitmap.height/4, true)
-                    fileSize >= 8.0 -> Bitmap.createScaledBitmap(bitmap, (bitmap.width/3.5).toInt(), (bitmap.height/3.5).toInt(), true)
-                    fileSize >= 5.0 -> Bitmap.createScaledBitmap(bitmap, (bitmap.width/2.5).toInt(), (bitmap.height/2.5).toInt(), true)
-                    fileSize >= 3.0 -> Bitmap.createScaledBitmap(bitmap, (bitmap.width/2), (bitmap.height/2), true)
-                    fileSize >= 1.0 -> Bitmap.createScaledBitmap(bitmap, (bitmap.width/1.5).toInt(), (bitmap.height/1.5).toInt(), true)
-                    else -> bitmap
-                }
-
-                val exif = ExifInterface(i.path)
-                val orientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, 0)
-                val matrix = Matrix()
-                when (orientation) {
-                    6 -> matrix.postRotate(90f)
-                    3 -> matrix.postRotate(180f)
-                    8 -> matrix.postRotate(270f)
-                }
-
-                val rotatedBitmap = Bitmap.createBitmap(compressedBitmap, 0, 0, compressedBitmap.width, compressedBitmap.height, matrix, true)
-
-
-                val timeStamp = SimpleDateFormat("ddMMyyyy_HHmmss_SSS", Locale.getDefault()).format(Date())
-                    val fileName = "PMU_$timeStamp.jpg"
-                    val file = File(folder, fileName)
-
-                if (file.exists()) file.delete ()
-                    try {
-                        val stream = FileOutputStream(file)
-                        rotatedBitmap.compress(Bitmap.CompressFormat.JPEG, 95, stream)
-                        stream.flush()
-                        stream.close()
-                    } catch (e: Exception) {
-                        e.printStackTrace()
-                    }
-
-                val baos = ByteArrayOutputStream()
-                rotatedBitmap.compress(Bitmap.CompressFormat.JPEG, 95, baos) //Compress bitmap to ByteArrayOutputStream.
-                val imageInBytes = baos.toByteArray() //Convert ByteArrayOutputStream to byte array.
-                val imageInBase64: String = Base64.getEncoder().encodeToString(imageInBytes) //Convert byte array to base64 string.
-
-                imageInBase64List.add(imageInBase64)
-            }
-
-            Toast.makeText(this, "tttt", Toast.LENGTH_LONG).show()
-
             super.onActivityResult(requestCode, resultCode, data)
-
         }
     }
 
