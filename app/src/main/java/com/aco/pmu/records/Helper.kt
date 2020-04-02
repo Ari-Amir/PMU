@@ -1,6 +1,5 @@
 package com.aco.pmu.records
 
-import android.annotation.SuppressLint
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Matrix
@@ -9,6 +8,7 @@ import android.os.Environment
 import com.nguyenhoanglam.imagepicker.model.Image
 import java.io.File
 import java.io.FileOutputStream
+import java.util.*
 import kotlin.math.roundToInt
 
 
@@ -19,10 +19,8 @@ class Helper {
         var imagesPaths = ""
 
         for (i in listOfUncompressedImages) {
-
-            val imageName = i.name.substring(0, i.name.lastIndexOf('.'))
             val imagePath = "/data/data/com.aco.pmu/databases/Photos"
-            val imageFullPath = "$imagePath/$imageName.pmu"
+            val imageFullPath = "$imagePath/${i.name}"
 
             imagesPathsList.add(imageFullPath)
             imagesPaths = imagesPathsList.joinToString()
@@ -38,34 +36,29 @@ class Helper {
                  databaseFileList.add(i.name)
              }
          }
-
-
-
-
+        
         //check if files to write are exist in database
-        var filesToWriteList = mutableListOf<Image>()
+        val filesToWriteList = mutableListOf<Image>()
         if (databaseFileList.size == 0) {
             for (i in listOfUncompressedImages) {
                 filesToWriteList.add(i)
             }
 
         } else {
-            for (i in databaseFileList) {
-                for (l in listOfUncompressedImages) {
-                    if (i.substring(0, i.lastIndexOf('.')) != l.name.substring(0, l.name.lastIndexOf('.'))) {
-                        filesToWriteList.add(l)
-                    }
+            for (i in listOfUncompressedImages) {
+                val directory = "//data/data//com.aco.pmu//databases//Photos"
+                val file = File(directory, i.name)
+                if (!file.exists()) {
+                    filesToWriteList.add(i)
                 }
             }
         }
-
+        
+        //write files to database
         for (i in filesToWriteList) {
-
             val bitmap: Bitmap = BitmapFactory.decodeFile(i.path) //Convert the image into bitmap.
-
             val imageFile: File = File(i.path)
             val fileSize = (imageFile.length().toDouble() / 1048576 * 100.0).roundToInt() / 100.0
-
             val compressedBitmap: Bitmap
 
             compressedBitmap = when {
@@ -78,7 +71,7 @@ class Helper {
                 fileSize >= 1.0 -> Bitmap.createScaledBitmap(bitmap, (bitmap.width/1.5).toInt(), (bitmap.height/1.5).toInt(), true)
                 else -> bitmap
             }
-
+            
             val exif = ExifInterface(i.path)
             val orientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, 0)
             val matrix = Matrix()
@@ -94,7 +87,7 @@ class Helper {
             val folder = File(root, "//data//com.aco.pmu//databases//Photos")
             folder.mkdirs()
 
-            val fileName = "${i.name.substring(0, i.name.lastIndexOf('.'))}.pmu"
+            val fileName = i.name
             val file = File(folder, fileName)
 
             if (file.exists()) file.delete()
@@ -107,7 +100,23 @@ class Helper {
                 e.printStackTrace()
             }
         }
-        return imagesPaths
+        return imagesPaths.replace(" ", "")
+    }
+
+    fun getImagesFromPath(path: String) : List<Image> {
+        val list = mutableListOf<Image>()
+        val stringToList = path.split(',')
+
+        if (path.isNotEmpty()) {
+            for (i in stringToList) {
+                val imageName = File(i).name
+                val imagePath = File(i).parent + "/" + imageName
+                val imageId = String.format("%04d", Random().nextInt(10000)).toLong()
+                val image = Image(imageId, imageName, imagePath)
+                list.add(image)
+            }
+        }
+        return list.toList()
     }
 }
 
@@ -134,61 +143,6 @@ class Helper {
 
 
 
-
-
-
-
-//    fun getImagesToBitmapLength(listOfUncompressedImages: MutableList<Image>): String {
-//        val list = mutableListOf<String>()
-//
-//        var imagesLength = ""
-//
-//
-//        for (i in listOfUncompressedImages) {
-//
-//            val bitmap: Bitmap = BitmapFactory.decodeFile(i.path) //Convert the image into bitmap.
-//
-//            val imageFile: File = File(i.path)
-//            val fileSize = (imageFile.length().toDouble() / 1048576 * 100.0).roundToInt() / 100.0
-//
-//            val compressedBitmap: Bitmap
-//
-//            compressedBitmap = when {
-//                fileSize >= 14.0 -> Bitmap.createScaledBitmap(bitmap, bitmap.width/5, bitmap.height/5, true)
-//                fileSize >= 12.0 -> Bitmap.createScaledBitmap(bitmap, (bitmap.width/4.5).toInt(), (bitmap.height/4.5).toInt(), true)
-//                fileSize >= 10.0 -> Bitmap.createScaledBitmap(bitmap, bitmap.width/4, bitmap.height/4, true)
-//                fileSize >= 8.0 -> Bitmap.createScaledBitmap(bitmap, (bitmap.width/3.5).toInt(), (bitmap.height/3.5).toInt(), true)
-//                fileSize >= 5.0 -> Bitmap.createScaledBitmap(bitmap, (bitmap.width/2.5).toInt(), (bitmap.height/2.5).toInt(), true)
-//                fileSize >= 3.0 -> Bitmap.createScaledBitmap(bitmap, (bitmap.width/2), (bitmap.height/2), true)
-//                fileSize >= 1.0 -> Bitmap.createScaledBitmap(bitmap, (bitmap.width/1.5).toInt(), (bitmap.height/1.5).toInt(), true)
-//                else -> bitmap
-//            }
-//
-//            val exif = ExifInterface(i.path)
-//            val orientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, 0)
-//            val matrix = Matrix()
-//            when (orientation) {
-//                6 -> matrix.postRotate(90f)
-//                3 -> matrix.postRotate(180f)
-//                8 -> matrix.postRotate(270f)
-//            }
-//
-//            val rotatedBitmap= Bitmap.createBitmap(compressedBitmap, 0, 0, compressedBitmap.width, compressedBitmap.height, matrix, true)
-//
-//            val stream = ByteArrayOutputStream()
-//            rotatedBitmap.compress(Bitmap.CompressFormat.JPEG, 95, stream)
-//            val byteArray = stream.toByteArray()
-//
-//            val byteArrayLength = byteArray.size
-//
-//            list.add(byteArrayLength.toString())
-//
-//            imagesLength = list.joinToString()
-//        }
-//
-//        return imagesLength
-//    }
-//
 //    fun convertByteArrayToImagesList(imageLength: String, imagesInByteArray: ByteArray) : MutableList<Image> {
 //
 //        val images = mutableListOf<Image>()

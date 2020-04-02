@@ -64,13 +64,12 @@ class AddRecordActivity : AppCompatActivity() {
         const val EXTRA_STATUS = "EXTRA_STATUS"
         const val EXTRA_IMAGE_ATTR = "EXTRA_IMAGE_ATTR"
         const val EXTRA_IMAGE_POSITION = "EXTRA_IMAGE_POSITION"
-        const val EXTRA_PHOTO_PATH = "EXTRA_PHOTO_PATH"
+        const val EXTRA_PHOTOS_PATH = "EXTRA_PHOTOS_PATH"
     }
 
     private var pickImageButton: Button? = null
     var adapter: AdapterForAddRecordsActivity? = null
     var images = ArrayList<Image>()
-
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -244,6 +243,11 @@ class AddRecordActivity : AppCompatActivity() {
             }
         }
 
+        pickImageButton?.setOnClickListener { selectImage() }
+        adapter = AdapterForAddRecordsActivity(this)
+        val layoutManager: RecyclerView.LayoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
+        imagesRecyclerView.layoutManager = layoutManager
+        imagesRecyclerView.adapter = adapter
 
 
         if (intent.hasExtra(EXTRA_ID)) {
@@ -264,17 +268,12 @@ class AddRecordActivity : AppCompatActivity() {
             priceEditText.setText(intent.getStringExtra(EXTRA_PRICE))
             commentsEditText.setText(intent.getStringExtra(EXTRA_COMMENTS))
             doneSwitch.isChecked = intent.getBooleanExtra(EXTRA_STATUS, false)
+            adapter?.setData(Helper().getImagesFromPath(intent.getStringExtra(EXTRA_PHOTOS_PATH)))
+            images.addAll(adapter!!.images)
 
         } else {
             toolbarLabel.text = "Новая запись"
         }
-
-
-        pickImageButton?.setOnClickListener { selectImage() }
-        adapter = AdapterForAddRecordsActivity(this)
-        val layoutManager: RecyclerView.LayoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
-        imagesRecyclerView.layoutManager = layoutManager
-        imagesRecyclerView.adapter = adapter
 
 
         adapter?.setOnItemClickListener(object : AdapterForAddRecordsActivity.OnItemClickListener {
@@ -399,7 +398,6 @@ class AddRecordActivity : AppCompatActivity() {
 
         val parsedDate = Date.parse(replaceMonth())
 
-        Helper().getImagesPaths(images)
 
         val data = Intent().apply {
             putExtra(EXTRA_DATE, parsedDate)
@@ -417,6 +415,7 @@ class AddRecordActivity : AppCompatActivity() {
             putExtra(EXTRA_PRICE, priceEditText.text.toString())
             putExtra(EXTRA_COMMENTS, commentsEditText.text.toString())
             putExtra(EXTRA_STATUS, doneSwitch.isChecked)
+            putExtra(EXTRA_PHOTOS_PATH, Helper().getImagesPaths(images))
 
             if (intent.getIntExtra(EXTRA_ID, -1) != -1) {
                 putExtra(

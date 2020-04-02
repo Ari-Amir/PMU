@@ -9,6 +9,7 @@ import android.widget.ImageView
 import androidx.annotation.Nullable
 import androidx.recyclerview.widget.RecyclerView
 import com.aco.pmu.R
+import com.aco.pmu.records.Helper
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.nguyenhoanglam.imagepicker.model.Image
@@ -18,7 +19,7 @@ import kotlin.collections.ArrayList
 
 class AdapterForAddRecordsActivity(private val context: Context) : RecyclerView.Adapter<AdapterForAddRecordsActivity.ImageViewHolder>() {
 
-    private val images: ArrayList<Image>
+    val images: ArrayList<Image>
     private val inflater: LayoutInflater
     private var listener: OnItemClickListener? = null
     private var listener2: OnItemLongClickListener? = null

@@ -48,10 +48,6 @@ class MoreFragment : Fragment() {
         backupAndRestoreButton.setOnClickListener {
             startActivity(Intent(context, GoogleDrive::class.java))
         }
-
-
-        bbb.setOnClickListener {
-        }
     }
 }
 
