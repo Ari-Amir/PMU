@@ -38,8 +38,8 @@ class GoogleDrive : RunTimePermission() {
         btnBackup.setOnClickListener {
             requestPermission(arrayOf(android.Manifest.permission.WRITE_EXTERNAL_STORAGE)) { isGranted ->
                 if (isGranted) {
-                    loader.startAnimation()
-                    loader.setIsVisible(true)
+                    loaderGoogleDrive.startAnimation()
+                    loaderGoogleDrive.setIsVisible(true)
                     btnBackup.isEnabled = false
                     btnRestore.isEnabled = false
 
@@ -57,7 +57,7 @@ class GoogleDrive : RunTimePermission() {
                                 ?.addOnSuccessListener { _ ->
                                     successCounter += 1
                                     if (successCounter == 3) {
-                                        loader.stopAnimation()
+                                        loaderGoogleDrive.stopAnimation()
                                         btnBackup.isEnabled = true
                                         btnRestore.isEnabled = true
                                         Toast.makeText(
@@ -70,7 +70,7 @@ class GoogleDrive : RunTimePermission() {
                                     }
                                 }
                                 ?.addOnFailureListener { _ ->
-                                    loader.stopAnimation()
+                                    loaderGoogleDrive.stopAnimation()
                                     btnBackup.isEnabled = true
                                     btnRestore.isEnabled = true
                                     Toast.makeText(
@@ -91,8 +91,8 @@ class GoogleDrive : RunTimePermission() {
         btnRestore.setOnClickListener {
             requestPermission(arrayOf(android.Manifest.permission.WRITE_EXTERNAL_STORAGE)) { isGranted ->
                 if (isGranted) {
-                    loader.startAnimation()
-                    loader.setIsVisible(true)
+                    loaderGoogleDrive.startAnimation()
+                    loaderGoogleDrive.setIsVisible(true)
                     btnBackup.isEnabled = false
                     btnRestore.isEnabled = false
 
@@ -142,7 +142,7 @@ class GoogleDrive : RunTimePermission() {
                                                                     successCounter += 1
 
                                                                     if (successCounter == 3) {
-                                                                        loader.stopAnimation()
+                                                                        loaderGoogleDrive.stopAnimation()
                                                                         btnBackup.isEnabled = true
                                                                         btnRestore.isEnabled = true
                                                                         Toast.makeText(
@@ -160,7 +160,7 @@ class GoogleDrive : RunTimePermission() {
                                 }
                         }
                         .addOnFailureListener { _ ->
-                            loader.stopAnimation()
+                            loaderGoogleDrive.stopAnimation()
                             btnBackup.isEnabled = true
                             btnRestore.isEnabled = true
                             Toast.makeText(this, "Ошибка... попробуйте еще раз", Toast.LENGTH_LONG)

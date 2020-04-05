@@ -6,15 +6,14 @@ import android.app.DatePickerDialog
 import android.app.TimePickerDialog
 import android.content.Context
 import android.content.Intent
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
-import android.graphics.Matrix
 import android.icu.util.Calendar
-import android.media.ExifInterface
-import android.os.*
+import android.os.Bundle
+import android.os.VibrationEffect
+import android.os.Vibrator
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
+import android.view.ViewGroup
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -27,20 +26,18 @@ import com.aco.pmu.pigments.PigmentsSelectFragment2
 import com.aco.pmu.pigments.PigmentsSelectFragment3
 import com.aco.pmu.procedures.ProceduresSelectFragment
 import com.aco.pmu.records.adapters.AdapterForAddRecordsActivity
-import com.aco.pmu.records.adapters.AdapterForBottomDialogFragment
 import com.nguyenhoanglam.imagepicker.model.Config
 import com.nguyenhoanglam.imagepicker.model.Image
 import com.nguyenhoanglam.imagepicker.ui.imagepicker.ImagePicker
 import kotlinx.android.synthetic.main.activity_add_record.*
-import java.io.ByteArrayInputStream
-import java.io.ByteArrayOutputStream
-import java.io.File
-import java.io.FileOutputStream
-import java.lang.StringBuilder
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Dispatchers.Main
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
-import kotlin.math.roundToInt
 
 
 class AddRecordActivity : AppCompatActivity() {
@@ -76,7 +73,6 @@ class AddRecordActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_add_record)
 
-
         findViewById<View>(R.id.dateSelectTextView).setOnClickListener {
             clickDatePicker()
         }
@@ -100,9 +96,41 @@ class AddRecordActivity : AppCompatActivity() {
         }
         findViewById<Button>(R.id.buttonPickImage).setOnClickListener { selectImage() }
 
-
         ic_menu_done_record.setOnClickListener {
-            saveRecord()
+
+            if (dateSelectTextView.text.toString().trim().isBlank()) {
+                Toast.makeText(baseContext, "Введите дату...", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            if (nameSurnameSelectTextView.text.toString().trim().isBlank()) {
+                Toast.makeText(baseContext, "Введите имя клиента...", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            if (doneSwitch.isChecked && priceEditText.text.toString().trim().isBlank()) {
+                Toast.makeText(baseContext, "Введите стоимость процедуры...", Toast.LENGTH_SHORT)
+                    .show()
+                return@setOnClickListener
+            }
+            loaderAddRecordActivity.startAnimation()
+            loaderAddRecordActivity.setIsVisible(true)
+
+            fun View.setEnabledRecursively(enabled: Boolean) {
+                isEnabled = enabled
+                if (this is ViewGroup)
+                    (0 until childCount).map(::getChildAt).forEach { it.setEnabledRecursively(enabled) }
+            }
+            constraintLayout.setEnabledRecursively(false)
+
+            adapter?.setOnItemClickListener(object : AdapterForAddRecordsActivity.OnItemClickListener {
+                override fun onItemClick(images: ArrayList<Image>, viewHolder: RecyclerView.ViewHolder) {
+                }
+            })
+
+            CoroutineScope(Dispatchers.IO).launch {
+                coroutine()
+            }
         }
 
         ic_menu_close_record.setOnClickListener {
@@ -342,92 +370,84 @@ class AddRecordActivity : AppCompatActivity() {
         })
     }
 
-
-    private fun saveRecord() {
-
-        if (dateSelectTextView.text.toString().trim().isBlank()) {
-            Toast.makeText(baseContext, "Введите дату...", Toast.LENGTH_SHORT).show()
-            return
+    suspend fun backToMainThread() {
+        withContext (Main) {
+            loaderAddRecordActivity.stopAnimation()
         }
+    }
 
-        if (nameSurnameSelectTextView.text.toString().trim().isBlank()) {
-            Toast.makeText(baseContext, "Введите имя клиента...", Toast.LENGTH_SHORT).show()
-            return
-        }
 
-        if (doneSwitch.isChecked && priceEditText.text.toString().trim().isBlank()) {
-            Toast.makeText(baseContext, "Введите стоимость процедуры...", Toast.LENGTH_SHORT)
-                .show()
-            return
-        }
 
-        val dateString = dateSelectTextView.text.toString()
+    suspend fun coroutine() {
+        saveRecord()
+        backToMainThread()
+    }
 
-        //val sdf = SimpleDateFormat("dd MMMM yyyy", Locale.ENGLISH)
 
-        fun replaceMonth(): String {
+    fun saveRecord() {
+            val dateString = dateSelectTextView.text.toString()
 
-            when {
-                dateSelectTextView.text.contains("января") -> return dateSelectTextView.text.toString()
-                    .replace("января", "january")
-                dateSelectTextView.text.contains("февраля") -> return dateSelectTextView.text.toString()
-                    .replace("февраля", "february")
-                dateSelectTextView.text.contains("марта") -> return dateSelectTextView.text.toString()
-                    .replace("марта", "march")
-                dateSelectTextView.text.contains("апреля") -> return dateSelectTextView.text.toString()
-                    .replace("апреля", "april")
-                dateSelectTextView.text.contains("мая") -> return dateSelectTextView.text.toString()
-                    .replace("мая", "may")
-                dateSelectTextView.text.contains("июня") -> return dateSelectTextView.text.toString()
-                    .replace("июня", "june")
-                dateSelectTextView.text.contains("июля") -> return dateSelectTextView.text.toString()
-                    .replace("июля", "july")
-                dateSelectTextView.text.contains("августа") -> return dateSelectTextView.text.toString()
-                    .replace("августа", "august")
-                dateSelectTextView.text.contains("сентября") -> return dateSelectTextView.text.toString()
-                    .replace("сентября", "september")
-                dateSelectTextView.text.contains("октября") -> return dateSelectTextView.text.toString()
-                    .replace("октября", "october")
-                dateSelectTextView.text.contains("ноября") -> return dateSelectTextView.text.toString()
-                    .replace("ноября", "november")
-                dateSelectTextView.text.contains("декабря") -> return dateSelectTextView.text.toString()
-                    .replace("декабря", "december")
+            //val sdf = SimpleDateFormat("dd MMMM yyyy", Locale.ENGLISH)
+
+            fun replaceMonth(): String {
+
+                when {
+                    dateSelectTextView.text.contains("января") -> return dateSelectTextView.text.toString()
+                        .replace("января", "january")
+                    dateSelectTextView.text.contains("февраля") -> return dateSelectTextView.text.toString()
+                        .replace("февраля", "february")
+                    dateSelectTextView.text.contains("марта") -> return dateSelectTextView.text.toString()
+                        .replace("марта", "march")
+                    dateSelectTextView.text.contains("апреля") -> return dateSelectTextView.text.toString()
+                        .replace("апреля", "april")
+                    dateSelectTextView.text.contains("мая") -> return dateSelectTextView.text.toString()
+                        .replace("мая", "may")
+                    dateSelectTextView.text.contains("июня") -> return dateSelectTextView.text.toString()
+                        .replace("июня", "june")
+                    dateSelectTextView.text.contains("июля") -> return dateSelectTextView.text.toString()
+                        .replace("июля", "july")
+                    dateSelectTextView.text.contains("августа") -> return dateSelectTextView.text.toString()
+                        .replace("августа", "august")
+                    dateSelectTextView.text.contains("сентября") -> return dateSelectTextView.text.toString()
+                        .replace("сентября", "september")
+                    dateSelectTextView.text.contains("октября") -> return dateSelectTextView.text.toString()
+                        .replace("октября", "october")
+                    dateSelectTextView.text.contains("ноября") -> return dateSelectTextView.text.toString()
+                        .replace("ноября", "november")
+                    dateSelectTextView.text.contains("декабря") -> return dateSelectTextView.text.toString()
+                        .replace("декабря", "december")
+                }
+                return dateString
             }
-            return dateString
-        }
 
-        val parsedDate = Date.parse(replaceMonth())
+            val parsedDate = Date.parse(replaceMonth())
 
 
-        val data = Intent().apply {
-            putExtra(EXTRA_DATE, parsedDate)
-            putExtra(EXTRA_TIME, timeSelectTextView.text.toString())
-            putExtra(EXTRA_FIRSTANDLASTNAME, nameSurnameSelectTextView.text.toString())
-            putExtra(EXTRA_PHONENUMBER1, phoneNumberSelectTextView1.text.toString())
-            putExtra(EXTRA_PHONENUMBER2, phoneNumberSelectTextView2.text.toString())
-            putExtra(EXTRA_PROCEDURES, procedureSelectTextView.text.toString())
-            putExtra(EXTRA_PIGMENT1, pigmentsSelectTextView1.text.toString())
-            putExtra(EXTRA_PIGMENT2, pigmentsSelectTextView2.text.toString())
-            putExtra(EXTRA_PIGMENT3, pigmentsSelectTextView3.text.toString())
-            putExtra(EXTRA_PIGMENTQUANTITY1, spinner1.selectedItemPosition)
-            putExtra(EXTRA_PIGMENTQUANTITY2, spinner2.selectedItemPosition)
-            putExtra(EXTRA_PIGMENTQUANTITY3, spinner3.selectedItemPosition)
-            putExtra(EXTRA_PRICE, priceEditText.text.toString())
-            putExtra(EXTRA_COMMENTS, commentsEditText.text.toString())
-            putExtra(EXTRA_STATUS, doneSwitch.isChecked)
-            putExtra(EXTRA_PHOTOS_PATH, Helper().getImagesPaths(images))
+            val data = Intent().apply {
+                putExtra(EXTRA_DATE, parsedDate)
+                putExtra(EXTRA_TIME, timeSelectTextView.text.toString())
+                putExtra(EXTRA_FIRSTANDLASTNAME, nameSurnameSelectTextView.text.toString())
+                putExtra(EXTRA_PHONENUMBER1, phoneNumberSelectTextView1.text.toString())
+                putExtra(EXTRA_PHONENUMBER2, phoneNumberSelectTextView2.text.toString())
+                putExtra(EXTRA_PROCEDURES, procedureSelectTextView.text.toString())
+                putExtra(EXTRA_PIGMENT1, pigmentsSelectTextView1.text.toString())
+                putExtra(EXTRA_PIGMENT2, pigmentsSelectTextView2.text.toString())
+                putExtra(EXTRA_PIGMENT3, pigmentsSelectTextView3.text.toString())
+                putExtra(EXTRA_PIGMENTQUANTITY1, spinner1.selectedItemPosition)
+                putExtra(EXTRA_PIGMENTQUANTITY2, spinner2.selectedItemPosition)
+                putExtra(EXTRA_PIGMENTQUANTITY3, spinner3.selectedItemPosition)
+                putExtra(EXTRA_PRICE, priceEditText.text.toString())
+                putExtra(EXTRA_COMMENTS, commentsEditText.text.toString())
+                putExtra(EXTRA_STATUS, doneSwitch.isChecked)
+                putExtra(EXTRA_PHOTOS_PATH, Helper().getImagesPaths(images))
 
-            if (intent.getIntExtra(EXTRA_ID, -1) != -1) {
-                putExtra(
-                    EXTRA_ID, intent.getIntExtra(
-                        EXTRA_ID, -1
-                    )
-                )
+                if (intent.getIntExtra(EXTRA_ID, -1) != -1) {
+                    putExtra(EXTRA_ID, intent.getIntExtra(EXTRA_ID, -1))
+                }
             }
-        }
 
-        setResult(Activity.RESULT_OK, data)
-        finish()
+            setResult(Activity.RESULT_OK, data)
+            finish()
     }
 
 

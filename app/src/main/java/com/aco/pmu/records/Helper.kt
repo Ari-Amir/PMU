@@ -14,6 +14,7 @@ import kotlin.math.roundToInt
 
 class Helper {
 
+
     fun getImagesPaths (listOfUncompressedImages: MutableList<Image>): String {
         val imagesPathsList = mutableListOf<String>()
         var imagesPaths = ""
@@ -107,8 +108,19 @@ class Helper {
         val list = mutableListOf<Image>()
         val stringToList = path.split(',')
 
-        if (path.isNotEmpty()) {
-            for (i in stringToList) {
+        val databaseFileList = mutableListOf<String>()
+        val filesPath = File("//data/data//com.aco.pmu//databases//Photos")
+        val listFiles = filesPath.listFiles()
+        if (listFiles != null) {
+            for (i in listFiles) {
+                databaseFileList.add(i.toString())
+            }
+        }
+
+        val stringTolistChecked = stringToList.intersect(databaseFileList)
+
+        if (stringTolistChecked.isNotEmpty()) {
+            for (i in stringTolistChecked) {
                 val imageName = File(i).name
                 val imagePath = File(i).parent + "/" + imageName
                 val imageId = String.format("%04d", Random().nextInt(10000)).toLong()

@@ -16,17 +16,6 @@
             android:background="?attr/colorPrimary"
             tools:layout_editor_absoluteX="58dp"/>
 
-<!--    <ImageView-->
-<!--            android:id="@+id/ic_menu_close_backup"-->
-<!--            android:src="@drawable/ic_close"-->
-<!--            android:layout_width="wrap_content"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:layout_marginRight="360dp"-->
-<!--            android:clickable="true"-->
-<!--            app:layout_constraintBottom_toBottomOf="@+id/toolbar"-->
-<!--            app:layout_constraintRight_toRightOf="@id/toolbar"-->
-<!--            app:layout_constraintTop_toTopOf="@+id/toolbar"-->
-<!--            app:layout_constraintVertical_bias="0.543" />-->
 
     <ImageView
         android:id="@+id/logo_google_drive"
@@ -111,7 +100,7 @@
             app:layout_constraintBottom_toBottomOf="parent"/>
 
     <com.example.kloadingspin.KLoadingSpin
-        android:id="@+id/loader"
+        android:id="@+id/loaderGoogleDrive"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:primarySpinnerColor="@color/black"
