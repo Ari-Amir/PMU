@@ -115,18 +115,8 @@ class AddRecordActivity : AppCompatActivity() {
             }
             loaderAddRecordActivity.startAnimation()
             loaderAddRecordActivity.setIsVisible(true)
-
-            fun View.setEnabledRecursively(enabled: Boolean) {
-                isEnabled = enabled
-                if (this is ViewGroup)
-                    (0 until childCount).map(::getChildAt).forEach { it.setEnabledRecursively(enabled) }
-            }
-            constraintLayout.setEnabledRecursively(false)
-
-            adapter?.setOnItemClickListener(object : AdapterForAddRecordsActivity.OnItemClickListener {
-                override fun onItemClick(images: ArrayList<Image>, viewHolder: RecyclerView.ViewHolder) {
-                }
-            })
+            loaderAddRecordActivity.isClickable = true
+            loaderAddRecordActivity.translationZ = 1f
 
             CoroutineScope(Dispatchers.IO).launch {
                 coroutine()
@@ -376,15 +366,13 @@ class AddRecordActivity : AppCompatActivity() {
         }
     }
 
-
-
     suspend fun coroutine() {
         saveRecord()
         backToMainThread()
     }
 
-
     fun saveRecord() {
+
             val dateString = dateSelectTextView.text.toString()
 
             //val sdf = SimpleDateFormat("dd MMMM yyyy", Locale.ENGLISH)

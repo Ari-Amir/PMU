@@ -69,6 +69,10 @@ class RecordsRepository(application: Application) {
         return appDatabaseDao.getRecordDates()
     }
 
+    fun getPhotosPath(): List<String> {
+        return appDatabaseDao.getPhotosPath()
+    }
+
     companion object {
         private class InsertRecordAsyncTask(appDatabaseDao: AppDatabaseDao) : AsyncTask<RecordsEntity, Unit, Unit>() {
             val recordDao = appDatabaseDao

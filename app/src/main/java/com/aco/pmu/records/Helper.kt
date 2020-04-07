@@ -1,5 +1,7 @@
 package com.aco.pmu.records
 
+
+import android.app.Application
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Matrix
@@ -14,48 +16,44 @@ import kotlin.math.roundToInt
 
 class Helper {
 
+    private val photosFolder = "/data/data/com.aco.pmu/databases/Photos"
+
 
     fun getImagesPaths (listOfUncompressedImages: MutableList<Image>): String {
-        val imagesPathsList = mutableListOf<String>()
-        var imagesPaths = ""
+        //get paths of images which are in recycler view from (listOfUncompressedImages)
+        // put them into list (pathsList)
+        // convert this list to String (pathsString)
+        val pathsList = mutableListOf<String>()
+        var pathsString = ""
 
         for (i in listOfUncompressedImages) {
-            val imagePath = "/data/data/com.aco.pmu/databases/Photos"
-            val imageFullPath = "$imagePath/${i.name}"
+            val folder = photosFolder
+            val imagePath = "$folder/${i.name}"
 
-            imagesPathsList.add(imageFullPath)
-            imagesPaths = imagesPathsList.joinToString()
+            pathsList.add(imagePath)
+            pathsString = pathsList.joinToString()
         }
 
-        //get files in database
-         val databaseFileList = mutableListOf<String>()
-         val filesPath = File("//data/data//com.aco.pmu//databases//Photos")
-         val list = filesPath.listFiles()
+        //get list of files names (foldersFileNameList) from //data//com.aco.pmu//databases//Photo
+         val foldersFileNameList = mutableListOf<String>()
+         val foldersFileList = File(photosFolder).listFiles()
 
-         if (list != null) {
-             for (i in list) {
-                 databaseFileList.add(i.name)
+         if (foldersFileList != null) {
+             for (i in foldersFileList) {
+                 foldersFileNameList.add(i.name)
              }
          }
         
-        //check if files to write are exist in database
+        //if files to write are NOT exist in //data//com.aco.pmu//databases//Photo, add those files to list (filesToWriteList), else -> do nothing
         val filesToWriteList = mutableListOf<Image>()
-        if (databaseFileList.size == 0) {
             for (i in listOfUncompressedImages) {
-                filesToWriteList.add(i)
-            }
-
-        } else {
-            for (i in listOfUncompressedImages) {
-                val directory = "//data/data//com.aco.pmu//databases//Photos"
-                val file = File(directory, i.name)
+                val file = File(photosFolder, i.name)
                 if (!file.exists()) {
                     filesToWriteList.add(i)
                 }
             }
-        }
-        
-        //write files to database
+
+        //write files to //data//com.aco.pmu//databases//Photos
         for (i in filesToWriteList) {
             val bitmap: Bitmap = BitmapFactory.decodeFile(i.path) //Convert the image into bitmap.
             val imageFile: File = File(i.path)
@@ -101,7 +99,7 @@ class Helper {
                 e.printStackTrace()
             }
         }
-        return imagesPaths.replace(" ", "")
+        return pathsString.replace(" ", "")
     }
 
     fun getImagesFromPath(path: String) : List<Image> {
@@ -129,6 +127,37 @@ class Helper {
             }
         }
         return list.toList()
+    }
+}
+
+class Helper2(application: Application) {
+    private val repository = RecordsRepository(application)
+
+    fun updateFiles() {
+        val photosPathsFromDatabase = repository.getPhotosPath()
+        val photosPathsFromDatabaseInString = photosPathsFromDatabase.joinToString()
+        val photosPathsFromDatabaseInList = mutableListOf<String>()
+        for (i in photosPathsFromDatabaseInString.split(",")) {
+            photosPathsFromDatabaseInList.add(i.trim())
+        }
+        val allPhotosPaths = photosPathsFromDatabaseInList.distinct()
+
+
+        //get list of files full path (foldersFileNameList) from //data//com.aco.pmu//databases//Photo
+        val foldersFileFullPathList = mutableListOf<String>()
+        val foldersFileList = File("//data/data//com.aco.pmu//databases//Photos").listFiles()
+
+        if (foldersFileList != null) {
+            for (i in foldersFileList) {
+                foldersFileFullPathList.add(i.path)
+            }
+        }
+
+        val filesToDelete = foldersFileFullPathList.filter { !allPhotosPaths.contains(it) }
+
+        for (i in filesToDelete) {
+            File(i).delete()
+        }
     }
 }
 

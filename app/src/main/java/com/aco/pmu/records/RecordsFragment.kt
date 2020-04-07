@@ -84,6 +84,7 @@ class RecordsFragment : Fragment(), CalendarView.CalendarListener {
             .format(Instant.now())
 
         getDatesFromRoom()
+        getPaths()
 
         val dateTodayParsed = Date.parse(dateToday)
 
@@ -91,7 +92,6 @@ class RecordsFragment : Fragment(), CalendarView.CalendarListener {
             .observeOnce(viewLifecycleOwner, Observer<List<RecordsEntity>> {
                     adapter.submitList(it)
             })
-
 
         recordsViewModel.getRecordsCount().observe(viewLifecycleOwner, object : Observer<Int> {
             override fun onChanged(@Nullable integer: Int) {
@@ -132,6 +132,7 @@ class RecordsFragment : Fragment(), CalendarView.CalendarListener {
                             if (it != null)
                                 adapter.submitList(it)
                         })
+                    Helper2(activity!!.application).updateFiles()
                 }
 
                 alertDialog.setNegativeButton("Нет") { _, _ ->
@@ -224,16 +225,10 @@ class RecordsFragment : Fragment(), CalendarView.CalendarListener {
                 "${newRecord.firstAndlastNames} добавлен(а) в список Ваших записей!",
                 Toast.LENGTH_SHORT
             ).show()
-        } else if (requestCode == EDIT_RECORD_REQUEST && resultCode == Activity.RESULT_OK) {
-            val id = data?.getIntExtra(AddRecordActivity.EXTRA_ID, -1)
 
-//            if (id == -1) {
-//                Toast.makeText(
-//                    activity,
-//                    "Невозможно обновить! Упс... видимо что-то случилось!",
-//                    Toast.LENGTH_SHORT
-//                ).show()
-//            }
+            Helper2(activity!!.application).updateFiles()
+
+        } else if (requestCode == EDIT_RECORD_REQUEST && resultCode == Activity.RESULT_OK) {
 
             val updateRecord = RecordsEntity(
                 data!!.getLongExtra(AddRecordActivity.EXTRA_DATE, -1),
@@ -267,7 +262,14 @@ class RecordsFragment : Fragment(), CalendarView.CalendarListener {
             val dateFromTimestamp = Date(updateRecord.date!!)
             setAndMarkCurrentDate(dateFromTimestamp)
             getDatesFromRoom()
+
+            Helper2(activity!!.application).updateFiles()
         }
+    }
+
+    fun getPaths() {
+        val list: ArrayList<String> = ArrayList()
+        list.addAll(recordsViewModel.getPhotosPath())
     }
 
     fun getDatesFromRoom() {

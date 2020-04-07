@@ -44,4 +44,9 @@ class RecordsViewModel(application: Application) : AndroidViewModel(application)
     fun getRecordDates(): List<Long> {
         return repository.getRecordDates()
     }
+
+    fun getPhotosPath(): List<String> {
+        return repository.getPhotosPath()
+    }
+
 }

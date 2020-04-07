@@ -76,5 +76,6 @@ interface AppDatabaseDao {
     @Query("SELECT date FROM records_table")
     fun getRecordDates(): List<Long>
 
-
+    @Query("SELECT photosPaths FROM records_table")
+    fun getPhotosPath(): List<String>
 }

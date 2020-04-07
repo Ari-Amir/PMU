@@ -11,20 +11,20 @@ import androidx.room.TypeConverters
 @TypeConverters(Converters::class)
 abstract class AppDatabase : RoomDatabase() {
 
-    abstract fun dataBaseDao (): AppDatabaseDao
+    abstract fun dataBaseDao(): AppDatabaseDao
 
     companion object {
         private var instance: AppDatabase? = null
 
         fun getInstance(context: Context): AppDatabase? =
-                instance ?: synchronized(this) {
-                    instance ?: Room.databaseBuilder(
-                        context.applicationContext,
-                        AppDatabase::class.java, "PMUs_database"
-                    )
-                        .addMigrations(Migration.MIGRATION_8_9)
-                        .allowMainThreadQueries()
-                        .build().also { instance = it }
-                }
+            instance ?: synchronized(this) {
+                instance ?: Room.databaseBuilder(
+                    context.applicationContext,
+                    AppDatabase::class.java, "PMUs_database"
+                )
+                    .addMigrations(Migration.MIGRATION_8_9)
+                    .allowMainThreadQueries()
+                    .build().also { instance = it }
             }
-        }
+    }
+}
