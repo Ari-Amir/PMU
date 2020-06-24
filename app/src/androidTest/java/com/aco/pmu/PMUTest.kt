@@ -1,4 +1,5 @@
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.rule.ActivityTestRule
 import com.aco.pmu.MainActivity
 import com.aco.pmu.scenarios.AddNewClientScenario
@@ -6,6 +7,7 @@ import com.aco.pmu.scenarios.AddNewPigmentScenario
 import com.aco.pmu.scenarios.AddNewProcedureScenario
 import com.aco.pmu.scenarios.AddNewRecordScenario
 import com.kaspersky.kaspresso.testcases.api.testcase.DocLocScreenshotTestCase
+import org.junit.After
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -24,7 +26,7 @@ class PMUTest : DocLocScreenshotTestCase(
 
 
     @Test
-    fun AddNewRecordTest() {
+    fun addNewRecordTest() {
         run {
             step("1") {
                 scenario(AddNewClientScenario())
@@ -42,10 +44,10 @@ class PMUTest : DocLocScreenshotTestCase(
     }
 
 
-//    @After
-//    fun deleteDatabase() {
-//        InstrumentationRegistry.getInstrumentation().targetContext.deleteDatabase("LuckyPMs_database")
-//    }
+    @After
+    fun deleteDatabase() {
+        InstrumentationRegistry.getInstrumentation().targetContext.deleteDatabase("PMUs_database")
+    }
 }
 
 
